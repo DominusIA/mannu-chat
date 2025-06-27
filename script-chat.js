@@ -34,29 +34,7 @@ function appendMessage(sender, text, className) {
 
 async function getBotReply(message) {
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch("https://mannu-backend.vercel.app/api/chat", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + process.env.OPENAI_API_KEY
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: [
-          { role: "system", content: "Você é a Mannu.AI, uma especialista em marketing criada pela Dominus. Use uma linguagem simpática, direta e didática." },
-          { role: "user", content: message }
-        ]
-      })
-    });
-
-    const data = await res.json();
-    return data.choices[0].message.content.trim();
-  } catch (err) {
-    return "Desculpe, algo deu errado 😕";
-  }
-}
-
-function logout() {
-  supabase.auth.signOut();
-  window.location.href = "index.html";
-}
+        "Content-Type": "application/json"
