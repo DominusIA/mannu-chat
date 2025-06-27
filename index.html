@@ -5,6 +5,13 @@
   <title>Login - Mannu.AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    #error-msg {
+      color: red;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="login-container">
@@ -14,6 +21,7 @@
     <button onclick="login()">Entrar</button>
     <p id="error-msg"></p>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js"></script>
   <script src="script-login.js"></script>
