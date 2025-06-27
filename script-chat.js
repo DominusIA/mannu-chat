@@ -11,18 +11,19 @@ window.onload = async () => {
 
   const saved = localStorage.getItem("mannu_chat");
   if (saved) chatBox.innerHTML = saved;
+
+  // Adiciona o evento ao botão após o carregamento
+  sendBtn.addEventListener("click", async () => {
+    const userText = input.value.trim();
+    if (!userText) return;
+
+    appendMessage("Você", userText, "user-message");
+    input.value = "";
+    const response = await getBotReply(userText);
+    appendMessage("Mannu.AI", response, "bot-message");
+    localStorage.setItem("mannu_chat", chatBox.innerHTML);
+  });
 };
-
-sendBtn.addEventListener("click", async () => {
-  const userText = input.value.trim();
-  if (!userText) return;
-
-  appendMessage("Você", userText, "user-message");
-  input.value = "";
-  const response = await getBotReply(userText);
-  appendMessage("Mannu.AI", response, "bot-message");
-  localStorage.setItem("mannu_chat", chatBox.innerHTML);
-});
 
 function appendMessage(sender, text, className) {
   const msg = document.createElement("div");
@@ -34,7 +35,23 @@ function appendMessage(sender, text, className) {
 
 async function getBotReply(message) {
   try {
-    const res = await fetch("https://mannu-backend.vercel.app/api/chat", {
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await res.json();
+    return data.reply || "Desculpe, algo deu errado 😕";
+  } catch (err) {
+    return "Desculpe, algo deu errado 😕";
+  }
+}
+
+
+function logout() {
+  supabase.auth.signOut();
+  window.location.href = "index.html";
+}
