@@ -8,6 +8,7 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 .login-container {
   background-color: #fff;
   padding: 20px;
@@ -17,18 +18,22 @@ body {
   flex-direction: column;
   width: 300px;
 }
+
 .login-container input {
   margin: 10px 0;
   padding: 10px;
   font-size: 16px;
 }
+
 .login-container button {
   background-color: #075e54;
   color: white;
   border: none;
   padding: 10px;
   cursor: pointer;
+  font-size: 16px;
 }
+
 .chat-container {
   width: 400px;
   height: 600px;
@@ -38,6 +43,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 .chat-header {
   background-color: #075e54;
   color: #fff;
@@ -45,12 +51,14 @@ body {
   font-weight: bold;
   text-align: center;
 }
+
 .chat-box {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
   background-color: #ece5dd;
 }
+
 .message {
   margin: 10px 0;
   max-width: 80%;
@@ -58,30 +66,41 @@ body {
   border-radius: 8px;
   clear: both;
 }
+
 .user-message {
   background-color: #dcf8c6;
   float: right;
   text-align: right;
 }
+
 .bot-message {
   background-color: #fff;
   float: left;
   text-align: left;
 }
+
 .input-container {
   display: flex;
   border-top: 1px solid #ccc;
+  padding: 10px;
+  background-color: #fff;
+  z-index: 2;
 }
+
 input[type="text"] {
   flex: 1;
   padding: 10px;
   border: none;
   font-size: 16px;
 }
+
 #send-btn {
   background-color: #075e54;
   color: white;
   border: none;
   padding: 10px 15px;
   cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
 }
