@@ -1,9 +1,16 @@
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
 
-// Aguarda o carregamento total do HTML antes de acessar o botão
-document.addEventListener("DOMContentLoaded", () => {
-  const sendBtn = document.getElementById("send-btn");
+window.addEventListener("DOMContentLoaded", async () => {
+  const { data, error } = await supabase.auth.getUser();
+  if (!data.user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const saved = localStorage.getItem("mannu_chat");
+  if (saved) chatBox.innerHTML = saved;
 
   sendBtn.addEventListener("click", async () => {
     const userText = input.value.trim();
@@ -17,17 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-window.onload = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (!data.user) {
-    window.location.href = "index.html";
-    return;
-  }
-
-  const saved = localStorage.getItem("mannu_chat");
-  if (saved) chatBox.innerHTML = saved;
-};
-
 function appendMessage(sender, text, className) {
   const msg = document.createElement("div");
   msg.className = `message ${className}`;
@@ -38,7 +34,7 @@ function appendMessage(sender, text, className) {
 
 async function getBotReply(message) {
   try {
-    const res = await fetch("/api/chat", {
+    const res = await fetch("https://mannu-backend.vercel.app/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
