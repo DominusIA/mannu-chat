@@ -1,8 +1,8 @@
-const chatBox = document.getElementById("chat-box");
-const input = document.getElementById("user-input");
-const sendBtn = document.getElementById("send-btn");
+document.addEventListener("DOMContentLoaded", async () => {
+  const chatBox = document.getElementById("chat-box");
+  const input = document.getElementById("user-input");
+  const sendBtn = document.getElementById("send-btn");
 
-window.addEventListener("DOMContentLoaded", async () => {
   const { data, error } = await supabase.auth.getUser();
   if (!data.user) {
     window.location.href = "index.html";
@@ -22,34 +22,34 @@ window.addEventListener("DOMContentLoaded", async () => {
     appendMessage("Mannu.AI", response, "bot-message");
     localStorage.setItem("mannu_chat", chatBox.innerHTML);
   });
-});
 
-function appendMessage(sender, text, className) {
-  const msg = document.createElement("div");
-  msg.className = `message ${className}`;
-  msg.innerText = text;
-  chatBox.appendChild(msg);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-async function getBotReply(message) {
-  try {
-    const res = await fetch("https://mannu-backend.vercel.app/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message })
-    });
-
-    const data = await res.json();
-    return data.reply || "Desculpe, algo deu errado 😕";
-  } catch (err) {
-    return "Desculpe, algo deu errado 😕";
+  function appendMessage(sender, text, className) {
+    const msg = document.createElement("div");
+    msg.className = `message ${className}`;
+    msg.innerText = text;
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
   }
-}
 
-function logout() {
-  supabase.auth.signOut();
-  window.location.href = "index.html";
-}
+  async function getBotReply(message) {
+    try {
+      const res = await fetch("https://mannu-backend.vercel.app/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      return data.reply || "Desculpe, algo deu errado 😕";
+    } catch (err) {
+      return "Desculpe, algo deu errado 😕";
+    }
+  }
+
+  window.logout = async function () {
+    await supabase.auth.signOut();
+    window.location.href = "index.html";
+  };
+});
