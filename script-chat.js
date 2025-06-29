@@ -46,9 +46,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json();
-      return data.reply || "Desculpe, algo deu errado 😕";
+
+      if (res.status !== 200 || !data.reply) {
+        console.error("Erro da API:", data.error);
+        return "⚠️ Aconteceu um erro. Tente novamente.";
+      }
+
+      return data.reply;
     } catch (err) {
-      return "Desculpe, algo deu errado 😕";
+      console.error("Erro de rede:", err);
+      return "⚠️ Erro de conexão. Verifique sua internet.";
     }
   }
 
