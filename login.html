@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Mannu.AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-container">
+    <img src="Logo MannuAi.svg" alt="Logo Mannu.AI" class="logo" />
+    <div class="login-box">
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="email" placeholder="E-mail ID" />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="Senha" />
+      </div>
+      <button onclick="login()">Confirmar</button>
+      <p id="error-msg" style="color: red; font-weight: bold;"></p>
+    </div>
+  </div>
+
+  <script src="https://kit.fontawesome.com/a2e0e6ad53.js" crossorigin="anonymous"></script>
+  <script type="module" src="supabase.js"></script>
+  <script type="module" src="script-login.js"></script>
+</body>
+</html>

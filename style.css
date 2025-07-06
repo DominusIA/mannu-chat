@@ -1,0 +1,74 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./Montserrat-Medium.ttf') format('truetype');
+}
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #010420;
+  font-family: 'Montserrat', sans-serif;
+}
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.logo {
+  width: 150px;
+  margin-bottom: 20px;
+}
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #4252ff;
+  margin-bottom: 30px;
+  object-fit: cover;
+}
+.login-box {
+  background-color: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.input-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 10px;
+}
+.input-group i {
+  color: #4252ff;
+  margin-right: 10px;
+}
+.input-group input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background-color: transparent;
+  color: #010420;
+}
+button {
+  width: 100%;
+  background-color: #00c800;
+  color: #010420;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button:hover {
+  background-color: #00b300;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Mannu.AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-container">
+    <img src="Logo MannuAi.svg" alt="Logo" class="logo" />
+    <div class="login-box">
+      <div class="input-group">
+        <i>@</i><input type="email" id="email" placeholder="E-mail ID" />
+      </div>
+      <div class="input-group">
+        <i>🔒</i><input type="password" id="password" placeholder="Senha" />
+      </div>
+      <button onclick="login()">Confirmar</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script src="script-login.js"></script>
+</body>
+</html>
