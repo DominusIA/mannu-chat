@@ -1,0 +1,6 @@
+# Ignorar arquivos sensíveis
+.env
+
+# Outras regras comuns
+node_modules/
+dist/
