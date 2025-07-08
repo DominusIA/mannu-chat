@@ -5,7 +5,7 @@ if (!user) window.location.href = "/";
 
 const messageInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
-const chat = document.getElementById("chat");
+const chat = document.getElementById("chat-box");
 
 function addMessage(sender, text, isBot = false) {
   const div = document.createElement("div");
