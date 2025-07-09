@@ -5,38 +5,54 @@ if (!user) window.location.href = "/";
 
 const messageInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
-const chat = document.getElementById("chat-box");
+const chatBox = document.getElementById("chat-box");
 
-function addMessage(sender, text, isBot = false) {
-  const div = document.createElement("div");
-  div.className = "message " + (isBot ? "bot" : "user");
-  div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+let isSending = false;
+
+function addMessage(text, isBot = false) {
+  const messageDiv = document.createElement("div");
+  messageDiv.className = "message " + (isBot ? "bot" : "user");
+  messageDiv.textContent = text;
+  chatBox.appendChild(messageDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 async function sendMessage() {
   const text = messageInput.value.trim();
-  if (!text) return;
+  if (!text || isSending) return;
 
-  addMessage("Você", text);
+  addMessage(text, false);
   messageInput.value = "";
+  isSending = true;
 
-  const response = await fetch("/api/webhook", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      phone: user.phone,
-      pushname: user.name,
-      message: text,
-    }),
-  });
+  try {
+    const response = await fetch("/api/webhook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone: user.phone,
+        pushname: user.name,
+        message: text,
+      }),
+    });
 
-  const data = await response.json();
-  addMessage("Mannu.AI", data.reply || "...pensando...", true);
+    const data = await response.json();
+    const reply = data.reply || "...pensando...";
+    addMessage(reply, true);
+  } catch (error) {
+    console.error("Erro ao enviar mensagem:", error);
+    addMessage("Desculpe, ocorreu um erro ao enviar a mensagem 😔", true);
+  } finally {
+    isSending = false;
+  }
 }
 
 sendButton.addEventListener("click", sendMessage);
 messageInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
 });
+
+// Focar no input ao carregar
+window.onload = () => {
+  messageInput.focus();
+};

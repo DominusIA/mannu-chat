@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat - Mannu.AI</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="chat-container">
     <header>
-      <img src="./Logo MannuAi.svg" alt="Logo Mannu.AI" class="chat-logo">
+      <img src="./Logo MannuAi.svg" alt="Logo Mannu.AI" class="chat-logo" />
+      <img src="./personagem-mannu.png" alt="Avatar da Mannu" class="chat-avatar" />
     </header>
 
     <main id="chat-box">
@@ -17,15 +18,17 @@
     </main>
 
     <footer>
-      <input type="text" id="user-input" placeholder="Pergunte à Mannu.AI...">
+      <input type="text" id="user-input" placeholder="Pergunte à Mannu.AI..." />
       <button id="send-button">
         <div class="send-circle">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#010420" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#010420" viewBox="0 0 24 24">
+            <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+          </svg>
         </div>
       </button>
     </footer>
   </div>
-  <img id="user-avatar" style="display: none;" />
+
   <script src="chat.js" type="module"></script>
 </body>
 </html>
