@@ -1,71 +1,3 @@
-@font-face {
-  font-family: 'Montserrat';
-  src: url('./Montserrat-Medium.ttf') format('truetype');
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #010420;
-  font-family: 'Montserrat', sans-serif;
-}
-
-/* CHAT */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #010420;
-  color: white;
-}
-
-.chat-logo {
-  width: 120px;
-  margin: 20px auto 10px;
-  display: block;
-}
-
-.chat-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid #4252ff;
-  margin: 10px auto 30px;
-  object-fit: cover;
-  display: block;
-}
-
-main#chat-box {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.message {
-  max-width: 70%;
-  padding: 12px 16px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.message.user {
-  align-self: flex-end;
-  background-color: #4252ff;
-  color: #fff;
-  border-bottom-right-radius: 0;
-}
-
-.message.bot {
-  align-self: flex-start;
-  background-color: #ffffff;
-  color: #010420;
-  border-bottom-left-radius: 0;
-}
-
 footer {
   display: flex;
   padding: 10px 20px;
@@ -77,26 +9,28 @@ footer {
 
 footer input[type="text"] {
   flex: 1;
-  padding: 16px 20px;
-  border-radius: 20px;
+  padding: 16px 24px;
+  border-radius: 24px;
   border: none;
   outline: none;
-  font-size: 15px;
-  background-color: #050833;
+  font-size: 16px;
+  background-color: #05063a;
   color: white;
   font-weight: 500;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 }
 
-footer input::placeholder {
-  color: #ccc;
+#send-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .send-circle {
   background-color: #4252ff;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -107,10 +41,3 @@ footer input::placeholder {
 .send-circle:hover {
   background-color: #3340d4;
 }
-
-.arrow {
-  color: #010420;
-  font-size: 16px;
-  font-weight: bold;
-}
-/* Forçando novo deploy na Vercel */
