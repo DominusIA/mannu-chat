@@ -1,43 +1,86 @@
-footer {
-  display: flex;
-  padding: 10px 20px;
-  align-items: center;
-  gap: 10px;
-  border-top: 1px solid #222;
+body {
   background-color: #010420;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-footer input[type="text"] {
-  flex: 1;
+.logo {
+  margin-top: 40px;
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.logo span {
+  color: #4252ff;
+}
+
+.profile-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin-top: 20px;
+  object-fit: cover;
+  border: 6px solid #4252ff;
+  background-color: white;
+}
+
+.chat-container {
+  position: absolute;
+  bottom: 40px;
+  width: 90%;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #02053c;
   padding: 16px 24px;
   border-radius: 24px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  background-color: #05063a;
-  color: white;
-  font-weight: 500;
+  box-shadow: 0px 0px 10px #00000033;
 }
 
-#send-button {
+.chat-container input {
+  border: none;
   background: transparent;
+  color: white;
+  font-size: 16px;
+  width: 100%;
+  outline: none;
+}
+
+.chat-container input::placeholder {
+  color: white;
+  opacity: 0.7;
+}
+
+.send-btn {
+  background-color: transparent;
   border: none;
-  padding: 0;
-  margin: 0;
-}
-
-.send-circle {
-  background-color: #4252ff;
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
-  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
 }
 
-.send-circle:hover {
-  background-color: #3340d4;
+.send-btn .circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #4252ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-btn .circle i {
+  border: solid #010420;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 4px;
+  transform: rotate(-45deg);
 }
