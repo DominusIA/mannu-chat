@@ -2,110 +2,19 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Mannu.AI - Chat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - Mannu.AI</title>
     <link rel="stylesheet" href="style.css" />
-    <style>
-      body {
-        background-color: #010420;
-        margin: 0;
-        padding: 0;
-        font-family: "Poppins", sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .logo {
-        margin-top: 40px;
-        font-size: 32px;
-        font-weight: 600;
-        color: #fff;
-      }
-
-      .logo span {
-        color: #4252ff;
-      }
-
-      .profile-img {
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
-        margin-top: 20px;
-        object-fit: cover;
-        border: 6px solid #4252ff;
-        background-color: white;
-      }
-
-      .chat-container {
-        position: absolute;
-        bottom: 40px;
-        width: 90%;
-        max-width: 600px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: #02053c;
-        padding: 16px 24px;
-        border-radius: 24px;
-        box-shadow: 0px 0px 10px #00000033;
-      }
-
-      .chat-container input {
-        border: none;
-        background: transparent;
-        color: white;
-        font-size: 16px;
-        width: 100%;
-        outline: none;
-      }
-
-      .chat-container input::placeholder {
-        color: white;
-        opacity: 0.7;
-      }
-
-      .send-btn {
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .send-btn .circle {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background-color: #4252ff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .send-btn .circle i {
-        border: solid #010420;
-        border-width: 0 3px 3px 0;
-        display: inline-block;
-        padding: 4px;
-        transform: rotate(-45deg);
-      }
-    </style>
   </head>
-  <body>
-    <div class="logo">Mannu.<span>ai</span></div>
-    <img src="mannu.png" alt="Personagem Mannu" class="profile-img" />
+  <body class="chat-body">
+    <img src="Logo MannuAi.svg" alt="Logo Mannu.AI" class="logo-chat" />
+    <img src="mannu-personagem.png" alt="Personagem Mannu" class="personagem-chat" />
 
-    <div class="chat-container">
-      <input type="text" placeholder="Pergunte à Mannu.AI" id="user-input" />
-      <button class="send-btn" onclick="sendMessage()">
-        <div class="circle">
-          <i></i>
-        </div>
+    <div class="chat-input-container">
+      <input type="text" placeholder="Pergunte à Mannu.AI" class="chat-input" />
+      <button class="send-btn">
+        <span class="send-arrow">↑</span>
       </button>
     </div>
-
-    <script type="module" src="chat.js"></script>
   </body>
 </html>
