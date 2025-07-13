@@ -10,11 +10,22 @@
     <img src="Logo MannuAi.svg" alt="Logo Mannu.AI" class="logo-chat" />
     <img src="mannu-personagem.png" alt="Personagem Mannu" class="personagem-chat" />
 
+    <div id="chat-box" class="chat-box">
+      <!-- mensagens aparecerão aqui -->
+    </div>
+
     <div class="chat-input-container">
-      <input type="text" placeholder="Pergunte à Mannu.AI" class="chat-input" />
-      <button class="send-btn">
+      <input
+        type="text"
+        id="user-input"
+        placeholder="Pergunte à Mannu.AI"
+        class="chat-input"
+      />
+      <button id="send-button" class="send-btn">
         <span class="send-arrow">↑</span>
       </button>
     </div>
+
+    <script type="module" src="chat.js"></script>
   </body>
 </html>
