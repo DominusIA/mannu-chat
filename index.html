@@ -1,28 +1,21 @@
-<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Login - Mannu.AI</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Mannu.AI</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="login-body">
     <img src="Logo MannuAi.svg" alt="Logo Mannu.AI" class="logo-login" />
-
     <div class="login-box">
-      <div class="input-group">
-        <input type="email" id="email" placeholder="E-mail ID" />
-      </div>
-      <div class="input-group">
-        <input type="password" id="password" placeholder="Senha" />
-      </div>
-      <button onclick="login()">Confirmar</button>
-      <p id="error-msg"></p>
+      <input type="email" id="email" placeholder="E-mail ID" class="login-input" />
+      <input type="password" id="password" placeholder="Senha" class="login-input" />
+      <button onclick="login()" class="login-btn">Confirmar</button>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="supabase.js" type="module"></script>
-    <script src="script-login.js" type="module"></script>
+    <script src="supabase.js"></script>
+    <script src="script-login.js"></script>
   </body>
 </html>
