@@ -41,7 +41,6 @@ async function sendMessage() {
   }
 }
 
-// Garante que o DOM esteja pronto
 document.addEventListener("DOMContentLoaded", () => {
   sendButton?.addEventListener("click", sendMessage);
   messageInput?.addEventListener("keydown", (e) => {

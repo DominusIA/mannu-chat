@@ -1,8 +1,8 @@
-import { supabase } from './supabase.js';
-
-const loginBtn = document.getElementById("login-btn");
-
-loginBtn.addEventListener("click", login);
+// script-login.js
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("login-btn");
+  loginBtn?.addEventListener("click", login);
+});
 
 async function login() {
   const email = document.getElementById("email").value.trim();
@@ -10,21 +10,27 @@ async function login() {
   const errorMsg = document.getElementById("error-msg");
 
   if (!email || !password) {
-    errorMsg.textContent = "Preencha todos os campos.";
+    errorMsg.textContent = "Preencha todos os campos!";
     return;
   }
 
-  const { data, error } = await supabase
-    .from("clientes")
-    .select("*")
-    .eq("email", email)
-    .eq("senha", password)
-    .single();
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error || !data) {
-    errorMsg.textContent = "E-mail ou senha incorretos.";
-  } else {
-    localStorage.setItem("mannu_user", JSON.stringify(data));
-    window.location.href = "/chat.html";
+    if (error || !data.session) {
+      errorMsg.textContent = "E-mail ou senha inválidos.";
+      return;
+    }
+
+    // Salva os dados essenciais do usuário
+    localStorage.setItem("mannu_user", JSON.stringify({
+      phone: data.user.phone || "", // se disponível
+      name: data.user.user_metadata?.name || data.user.email,
+    }));
+
+    window.location.href = "chat.html";
+  } catch (err) {
+    errorMsg.textContent = "Erro ao fazer login.";
+    console.error(err);
   }
 }

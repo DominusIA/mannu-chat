@@ -1,0 +1,91 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./fonts/Montserrat-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #010420;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.logo {
+  margin-top: 20px;
+  width: 120px;
+}
+
+.character {
+  margin-top: 10px;
+  width: 150px;
+  border-radius: 50%;
+  border: 4px solid #4252ff;
+}
+
+.chat-footer {
+  position: absolute;
+  bottom: 30px;
+  background-color: #010637;
+  border-radius: 20px;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+.chat-input::placeholder {
+  color: white;
+}
+
+.attach-button {
+  background-color: #010420;
+  color: #ffffff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.send-button {
+  background-color: #4252ff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.send-button i {
+  color: #010637;
+  font-size: 18px;
+}
