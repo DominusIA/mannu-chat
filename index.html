@@ -12,12 +12,14 @@
     <div class="login-box">
       <input type="email" id="email" placeholder="E-mail ID" class="login-input" />
       <input type="password" id="password" placeholder="Senha" class="login-input" />
-      <p id="error-msg"></p>
+      <p id="error-msg" style="color: red; font-weight: bold;"></p>
       <button id="login-btn" class="login-btn">Confirmar</button>
     </div>
 
-    <!-- Script do Supabase sem ES Modules -->
+    <!-- Importa o Supabase globalmente -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+    <!-- Arquivos locais -->
     <script src="supabase.js"></script>
     <script src="script-login.js"></script>
   </body>
