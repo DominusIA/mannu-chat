@@ -6,7 +6,6 @@ if (!user) window.location.href = "/";
 const messageInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 const chat = document.getElementById("chat-box");
-const fileUpload = document.getElementById("file-upload");
 
 function addMessage(sender, text, isBot = false) {
   const div = document.createElement("div");
@@ -36,21 +35,15 @@ async function sendMessage() {
 
     const data = await response.json();
     addMessage("Mannu.AI", data.reply || "...pensando...", true);
-  } catch (err) {
-    addMessage("Mannu.AI", "Erro ao enviar mensagem.", true);
-    console.error(err);
+  } catch (error) {
+    addMessage("Mannu.AI", "Erro ao enviar mensagem. Tente novamente.", true);
+    console.error(error);
   }
 }
 
-sendButton?.addEventListener("click", sendMessage);
-messageInput?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
-});
-
-fileUpload?.addEventListener("change", () => {
-  const file = fileUpload.files[0];
-  if (file) {
-    addMessage("Você", `📎 Imagem anexada: ${file.name}`);
-    // Aqui você pode implementar o envio da imagem via Supabase ou outro serviço
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  sendButton?.addEventListener("click", sendMessage);
+  messageInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
 });
