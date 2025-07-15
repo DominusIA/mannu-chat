@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat - Mannu.AI</title>
-  <link rel="stylesheet" href="chat.css" />
-</head>
-<body>
-  <div class="chat-container">
-    <img src="logo-mannuai.svg" alt="Logo Mannu" class="logo" />
-    <img src="mannu-personagem.png" alt="Mannu personagem" class="personagem" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - Mannu.AI</title>
+    <link rel="stylesheet" href="chat.css" />
+  </head>
+  <body class="chat-body">
+    <img src="Logo MannuAi.svg" alt="Logo Mannu.AI" class="logo-chat" />
+    <img src="mannu-personagem.png" alt="Personagem Mannu" class="personagem-chat" />
 
-    <div class="chat-input-area">
-      <input type="text" id="userInput" placeholder="Pergunte à Mannu.AI" />
-      <button class="anexar-btn">+ Anexar imagens</button>
-      <button class="enviar-btn">
-        <span class="arrow-up">↑</span>
+    <div id="chat-box" class="chat-box"></div>
+
+    <div class="chat-input-container">
+      <input type="text" id="user-input" placeholder="Pergunte à Mannu.AI" class="chat-input" />
+      
+      <label for="file-upload" class="file-btn">+ Anexar imagem</label>
+      <input type="file" id="file-upload" style="display: none" accept="image/*" />
+
+      <button id="send-button" class="send-btn">
+        <span class="send-arrow">↑</span>
       </button>
     </div>
-  </div>
 
-  <script src="chat.js" type="module"></script>
-</body>
+    <script type="module" src="chat.js"></script>
+  </body>
 </html>

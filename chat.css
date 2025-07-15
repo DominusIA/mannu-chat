@@ -1,51 +1,81 @@
 @font-face {
   font-family: 'Montserrat';
-  src: url('./fonts/Montserrat-Medium.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  src: url('Montserrat-Medium.ttf') format('truetype');
 }
 
-body {
+body, html {
   margin: 0;
   padding: 0;
-  background-color: #010420;
   font-family: 'Montserrat', sans-serif;
+  background-color: #010420;
+  height: 100%;
+}
+
+.chat-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  overflow: hidden;
+  padding-top: 20px;
+  position: relative;
 }
 
-.logo {
-  margin-top: 20px;
-  width: 120px;
+.logo-chat {
+  width: 80px;
+  margin-bottom: 10px;
 }
 
-.character {
-  margin-top: 10px;
-  width: 150px;
+.personagem-chat {
+  width: 100px;
   border-radius: 50%;
-  border: 4px solid #4252ff;
+  margin-bottom: 20px;
 }
 
-.chat-footer {
-  position: absolute;
-  bottom: 30px;
+.chat-box {
+  flex: 1;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  overflow-y: auto;
+  margin-bottom: 150px;
+  color: white;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 80%;
+  line-height: 1.4;
+}
+
+.user {
+  align-self: flex-end;
+  background-color: #4252ff;
+  color: #fff;
+}
+
+.bot {
+  align-self: flex-start;
+  background-color: #ffffff;
+  color: #010420;
+}
+
+.chat-input-container {
   background-color: #010637;
   border-radius: 20px;
-  padding: 20px;
-  width: 90%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.input-row {
+  padding: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
+  width: 90%;
+  max-width: 500px;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .chat-input {
@@ -55,37 +85,31 @@ body {
   color: white;
   font-size: 16px;
   outline: none;
+  min-width: 200px;
 }
 
-.chat-input::placeholder {
-  color: white;
-}
-
-.attach-button {
+.file-btn {
   background-color: #010420;
   color: #ffffff;
-  border: none;
-  padding: 10px 15px;
   border-radius: 10px;
-  cursor: pointer;
+  padding: 6px 12px;
   font-size: 14px;
-  align-self: flex-start;
+  cursor: pointer;
 }
 
-.send-button {
+.send-btn {
   background-color: #4252ff;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  margin-left: 10px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.send-button i {
+.send-arrow {
   color: #010637;
   font-size: 18px;
 }
