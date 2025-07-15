@@ -7,29 +7,25 @@
     <link rel="stylesheet" href="chat.css" />
   </head>
   <body class="chat-body">
-    <!-- Logo corrigida -->
-    <img src="logo-mannu.svg" alt="Logo Mannu.AI" class="logo-chat" />
+    <!-- Logo -->
+    <img src="Logo MannuAi.svg" alt="Logo Mannu.AI" class="logo-chat" />
 
     <!-- Personagem -->
     <img src="mannu-personagem.png" alt="Personagem Mannu" class="personagem-chat" />
 
-    <!-- Caixa de mensagens (em breve visível) -->
+    <!-- Caixa de mensagens -->
     <div id="chat-box" class="chat-box"></div>
 
-    <!-- Caixa de input -->
+    <!-- Caixa de entrada -->
     <div class="chat-input-container">
       <input
         type="text"
-        placeholder="Pergunte à Mannu.AI"
         id="user-input"
+        placeholder="Pergunte à Mannu.AI"
         class="chat-input"
       />
-
-      <!-- Botão de anexar imagem -->
-      <button class="attach-btn">+ Anexar imagem</button>
-
-      <!-- Botão de enviar com ID corrigido -->
-      <button class="send-btn" id="send-button">
+      <button id="attach-button" class="attach-btn">+ Anexar imagem</button>
+      <button id="send-button" class="send-btn">
         <span class="send-arrow">↑</span>
       </button>
     </div>
