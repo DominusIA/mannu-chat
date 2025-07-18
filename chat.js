@@ -5,15 +5,14 @@ if (!user) window.location.href = "/";
 
 const messageInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
-const attachButton = document.getElementById("attach-btn");
-const chat = document.getElementById("chat-box");
+const chatBox = document.getElementById("chat-box");
 
 function addMessage(sender, text, isBot = false) {
   const div = document.createElement("div");
   div.className = "message " + (isBot ? "bot" : "user");
-  div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  div.textContent = `${sender}: ${text}`;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 async function sendMessage() {
@@ -42,25 +41,9 @@ async function sendMessage() {
   }
 }
 
-// Executa quando a página estiver pronta
 document.addEventListener("DOMContentLoaded", () => {
   sendButton?.addEventListener("click", sendMessage);
   messageInput?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") sendMessage();
-  });
-
-  attachButton?.addEventListener("click", () => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.onchange = () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-
-      addMessage("Você", "[Imagem enviada]");
-
-      // Aqui você pode futuramente integrar o envio real do arquivo
-    };
-    fileInput.click();
   });
 });
