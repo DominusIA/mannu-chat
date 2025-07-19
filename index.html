@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Mannu.AI</title>
-    <link rel="stylesheet" href="login.css" />
-  </head>
-  <body class="login-body">
-    <img src="logo-mannuai.svg" alt="Logo Mannu.AI" class="logo-login" />
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Mannu.AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <div class="login-wrapper">
+    <img src="logo-mannuai.svg" alt="Mannu.AI" class="logo" />
     
     <div class="login-box">
-      <input type="email" id="email" placeholder="E-mail ID" class="login-input" />
-      <input type="password" id="password" placeholder="Senha" class="login-input" />
-      <p id="error-msg" style="color: red; font-weight: bold;"></p>
-      <button id="login-btn" class="login-btn">Confirmar</button>
+      <input type="email" id="email" placeholder="E-mail ID" />
+      <input type="password" id="password" placeholder="Senha" />
+      <button onclick="login()">Confirmar</button>
+      <p id="error-msg"></p>
     </div>
+  </div>
 
-    <!-- Importa o Supabase globalmente -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-    <!-- Arquivos locais -->
-    <script src="supabase.js"></script>
-    <script src="script-login.js"></script>
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script src="script-login.js"></script>
+</body>
 </html>
