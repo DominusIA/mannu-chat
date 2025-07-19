@@ -4,20 +4,29 @@
   <meta charset="UTF-8" />
   <title>Login - Mannu.AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="FavIcon.png" />
   <link rel="stylesheet" href="login.css" />
+  <style>
+    #error-msg {
+      color: red;
+      margin-top: 10px;
+      font-weight: bold;
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
 </head>
 <body>
   <div class="login-wrapper">
-    <img src="logo-mannuai.svg" alt="Mannu.AI" class="logo" />
-    
+    <img src="Logo-MannuAI.png" alt="Mannu.AI" style="margin-bottom: 20px;">
     <div class="login-box">
       <input type="email" id="email" placeholder="E-mail ID" />
       <input type="password" id="password" placeholder="Senha" />
-      <button onclick="login()">Confirmar</button>
+      <button>Confirmar</button>
       <p id="error-msg"></p>
     </div>
   </div>
 
+  <!-- Carregando a lib do Supabase e os scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js"></script>
   <script src="script-login.js"></script>
