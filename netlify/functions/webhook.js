@@ -10,39 +10,54 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-export default async (req, res) => {
+export async function handler(event, context) {
   try {
-    if (req.method !== 'POST') {
-      return res.status(405).json({ resposta: 'Método não permitido.' });
+    if (event.httpMethod !== 'POST') {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ resposta: 'Método não permitido.' }),
+      };
     }
 
-    const authHeader = req.headers.authorization || '';
+    const headers = event.headers;
+    const authHeader = headers.authorization || '';
     const token = authHeader.replace('Bearer ', '');
     if (!token) {
-      return res.status(401).json({ resposta: 'Token não fornecido.' });
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ resposta: 'Token não fornecido.' }),
+      };
     }
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     if (userError || !user) {
-      return res.status(401).json({ resposta: 'Usuário não autenticado.' });
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ resposta: 'Usuário não autenticado.' }),
+      };
     }
 
     const email = user.email;
     const id = user.id;
 
-    const { mensagem, tipo } = req.body;
+    const body = JSON.parse(event.body);
+    const { mensagem, tipo } = body;
+
     if (!mensagem || !tipo) {
-      return res.status(400).json({ resposta: 'Mensagem ou tipo ausente.' });
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ resposta: 'Mensagem ou tipo ausente.' }),
+      };
     }
 
-    // Busca ou cria o usuário na tabela
+    // Verifica ou cria o usuário
     const { data: existente } = await supabase
       .from('usuarios')
       .select('*')
       .eq('id', id)
       .single();
 
-    const hoje = new Date().toISOString().split('T')[0]; // formato YYYY-MM-DD
+    const hoje = new Date().toISOString().split('T')[0];
 
     if (!existente) {
       await supabase.from('usuarios').insert({
@@ -68,24 +83,24 @@ export default async (req, res) => {
       .eq('id', id)
       .single();
 
-    // Checa limites
-    if (tipo === 'texto') {
-      if (usuario.mensagens_hoje >= 25) {
-        return res.json({
+    if (tipo === 'texto' && usuario.mensagens_hoje >= 25) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
           resposta: 'Você atingiu o limite diário de 25 mensagens. Tente novamente amanhã.'
-        });
-      }
+        }),
+      };
     }
 
-    if (tipo === 'imagem') {
-      if (usuario.imagens_mes >= 20) {
-        return res.json({
+    if (tipo === 'imagem' && usuario.imagens_mes >= 20) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
           resposta: 'Você atingiu o limite mensal de 20 imagens. Tente novamente no próximo mês.'
-        });
-      }
+        }),
+      };
     }
 
-    // Geração da resposta via OpenAI
     let respostaFinal = '';
 
     if (tipo === 'texto') {
@@ -117,9 +132,15 @@ export default async (req, res) => {
         .eq('id', id);
     }
 
-    return res.json({ resposta: respostaFinal });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ resposta: respostaFinal }),
+    };
   } catch (error) {
-    console.error('Erro geral:', error);
-    return res.status(500).json({ resposta: 'Erro ao gerar resposta.' });
+    console.error('Erro no webhook:', error.message);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ resposta: 'Erro ao gerar resposta.', erro: error.message }),
+    };
   }
-};
+}
