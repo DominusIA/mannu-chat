@@ -1,106 +1,106 @@
-/* Fundo azul escuro */
+/* chat.css */
+
 body {
   margin: 0;
   padding: 0;
   background-color: #010420;
-  font-family: Arial, sans-serif;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Wrapper principal */
 .chat-wrapper {
-  width: 100%;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
   position: relative;
 }
 
-/* Logo da Mannu.AI */
 .logo {
-  width: 120px;
+  margin-top: 30px;
+  width: 150px;
+}
+
+.mannu-personagem {
   margin-top: 20px;
-}
-
-/* Imagem da personagem */
-.personagem {
-  width: 140px;
-  margin-top: 10px;
-}
-
-/* Área de mensagens */
-.chat-messages {
-  flex: 1;
-  width: 100%;
-  padding: 20px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  margin-bottom: 100px; /* espaço para o input não cobrir mensagens */
-}
-
-/* Área de entrada (rodapé) */
-.chat-input-area {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #010637;
-  padding: 15px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-}
-
-/* Campo de texto */
-.chat-input-area input[type="text"] {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #ffffff;
-  font-size: 16px;
   width: 200px;
 }
 
-/* Placeholder */
-.chat-input-area input::placeholder {
+.chat-messages {
+  flex: 1;
+  width: 100%;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  color: white;
+  font-size: 16px;
+}
+
+.user-message, .ai-message {
+  background-color: #4252ff;
+  color: #010420;
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: #ffffff;
+  color: #010420;
+}
+
+.ai-message {
+  align-self: flex-start;
+  background-color: #4252ff;
   color: #ffffff;
 }
 
-/* Botão de imagem */
-.image-button {
-  background-color: #010420;
-  color: #ffffff;
+.input-area {
+  position: absolute;
+  bottom: 20px;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#user-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 20px;
   border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-  white-space: nowrap;
+  font-size: 16px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Botão de envio (seta) */
-.send-button {
+.send-btn {
   background-color: #4252ff;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 45px;
+  height: 45px;
+  margin-left: 10px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-/* Ícone da seta */
-.arrow-up {
-  color: #010637;
-  font-size: 20px;
-  font-weight: bold;
-  line-height: 1;
+.send-btn:hover {
+  transform: scale(1.05);
+}
+
+.send-btn svg path {
+  fill: #010420;
 }
