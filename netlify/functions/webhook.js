@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { OpenAI } from 'openai';
+import OpenAI from 'openai'; // ✅ forma correta para SDK v4+
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -50,7 +50,6 @@ export async function handler(event, context) {
       };
     }
 
-    // Verifica ou cria o usuário
     const { data: existente } = await supabase
       .from('usuarios')
       .select('*')
@@ -108,6 +107,7 @@ export async function handler(event, context) {
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: mensagem }]
       });
+
       respostaFinal = completion.choices[0].message.content;
 
       await supabase
@@ -137,10 +137,13 @@ export async function handler(event, context) {
       body: JSON.stringify({ resposta: respostaFinal }),
     };
   } catch (error) {
-    console.error('Erro no webhook:', error.message);
+    console.error('❌ Erro no webhook:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ resposta: 'Erro ao gerar resposta.', erro: error.message }),
+      body: JSON.stringify({
+        resposta: 'Erro ao gerar resposta.',
+        erro: error.message
+      }),
     };
   }
 }

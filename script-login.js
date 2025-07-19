@@ -1,39 +1,24 @@
 // script-login.js
 
-// Aplica a fonte Montserrat
-const style = document.createElement('style');
-style.innerHTML = `
-  @font-face {
-    font-family: 'Montserrat';
-    src: url('Montserrat-Medium.ttf') format('truetype');
+async function signIn() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Preencha todos os campos.");
+    return;
   }
-  body, input, button {
-    font-family: 'Montserrat', sans-serif;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert("E-mail ou senha incorretos.");
+    return;
   }
-`;
-document.head.appendChild(style);
 
-window.onload = () => {
-  const button = document.querySelector("button");
-  button.onclick = async () => {
-    const email    = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const errorMsg = document.getElementById("error-msg");
-
-    if (!email || !password) {
-      errorMsg.textContent = "Preencha todos os campos.";
-      return;
-    }
-
-    const { data, error } = await window.supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      errorMsg.textContent = "E-mail ou senha incorretos.";
-    } else {
-      window.location.href = "chat.html";
-    }
-  };
-};
+  // Redireciona para o chat após login bem-sucedido
+  window.location.href = "chat.html";
+}

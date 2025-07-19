@@ -1,77 +1,74 @@
-/* Fundo da tela */
+/* login.css */
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('Montserrat-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: #010420;
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-/* Wrapper geral */
 .login-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Logo */
 .logo {
-  width: 120px;
-  margin-bottom: 30px;
+  width: 80px;
+  margin-bottom: 20px;
 }
 
-/* Caixa branca com cantos arredondados */
 .login-box {
   background-color: #ffffff;
-  padding: 40px 30px;
-  border-radius: 25px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: center;
   width: 300px;
 }
 
-/* Inputs */
 .login-box input {
-  background-color: #e5e5e5;
-  border: none;
+  width: 100%;
   padding: 12px;
-  border-radius: 10px;
-  font-size: 16px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e5e5e5;
   color: #010420;
-  outline: none;
+  font-size: 14px;
 }
 
-/* Placeholder dos inputs */
-.login-box input::placeholder {
-  color: #010420;
-}
-
-/* Botão */
 .login-box button {
+  width: 100%;
+  padding: 12px;
   background-color: #00c800;
   color: #010420;
   border: none;
-  padding: 12px;
-  border-radius: 20px;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .login-box button:hover {
   background-color: #00b000;
 }
 
-/* Mensagem de erro */
 #error-msg {
   color: red;
   font-weight: bold;
+  margin-top: 10px;
   text-align: center;
-  margin-top: 5px;
 }
