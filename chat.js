@@ -25,7 +25,6 @@ async function getUser() {
   }
 }
 
-// Verifica e inicializa contador de mensagens/imagens
 async function checkOrCreateUserData() {
   const { data, error } = await supabase
     .from("usuarios")
@@ -75,7 +74,7 @@ async function enviarParaMannu(mensagem, imagemBase64 = null) {
 
   adicionarMensagem("Você", mensagem || "[Imagem enviada]");
 
-  const resposta = await fetch("https://mannu-backend.vercel.app/webhook", {
+  const resposta = await fetch("https://mannuai.netlify.app/.netlify/functions/webhook", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -87,9 +86,9 @@ async function enviarParaMannu(mensagem, imagemBase64 = null) {
     }),
   });
 
-  const { resposta: respostaMannu } = await resposta.json();
-  adicionarMensagem("Mannu.AI", respostaMannu);
-
+  const json = await resposta.json();
+  adicionarMensagem("Mannu.AI", json.resposta || "Erro ao responder.");
+  
   const update = tipo === "texto"
     ? { mensagens_hoje: dados.mensagens_hoje + 1 }
     : { imagens_mes: dados.imagens_mes + 1 };
@@ -119,12 +118,4 @@ window.sendMessage = async function () {
       await enviarParaMannu(mensagem || "gerar imagem", base64);
     };
     reader.readAsDataURL(file);
-  } else {
-    await enviarParaMannu(mensagem);
-  }
-
-  userInput.value = "";
-  imageInput.value = "";
-};
-
-getUser();
+  } els
