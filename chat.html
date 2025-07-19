@@ -7,24 +7,18 @@
     <link rel="stylesheet" href="chat.css" />
   </head>
   <body>
-    <div class="chat-wrapper">
-      <img src="logo-mannu.png" alt="Logo Mannu" class="logo" />
-      <img src="mannu.png" alt="Personagem Mannu" class="character" />
-      <div id="chat-messages" class="chat-box"></div>
+    <header>
+      <img src="logo-mannuai.svg" alt="Logo da Mannu.AI" class="logo" />
+    </header>
+    <main>
+      <img src="mannu.png" alt="Mannu.AI" class="mannu-img" />
+      <div id="chat-messages"></div>
+    </main>
+    <footer>
+      <input id="user-input" placeholder="Pergunte à Mannu.AI" />
+      <button onclick="sendMessage()">➤</button>
+    </footer>
 
-      <div class="input-area">
-        <input
-          type="text"
-          id="user-input"
-          placeholder="Pergunte à Mannu.AI..."
-          onkeydown="if(event.key === 'Enter') sendMessage()"
-        />
-        <button onclick="sendMessage()" class="send-button">
-          <img src="seta.svg" alt="Enviar" />
-        </button>
-      </div>
-    </div>
-
-    <script type="module" src="chat.js"></script>
+    <script src="chat.js"></script>
   </body>
 </html>

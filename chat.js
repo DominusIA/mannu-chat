@@ -1,4 +1,3 @@
-// Aplica a fonte Montserrat
 const style = document.createElement('style');
 style.innerHTML = `
   @font-face {
@@ -17,7 +16,6 @@ window.sendMessage = async function () {
   const input = document.getElementById("user-input");
   const message = input.value.trim();
   const chatBox = document.getElementById("chat-messages");
-
   if (!message) return;
 
   const userMsg = document.createElement("div");
@@ -25,23 +23,19 @@ window.sendMessage = async function () {
   userMsg.textContent = message;
   chatBox.appendChild(userMsg);
   chatBox.scrollTop = chatBox.scrollHeight;
-
   input.value = "";
 
-  const token = sessionStorage.getItem("supabase.auth.token");
-  const access_token = token ? JSON.parse(token).currentSession.access_token : null;
-
   try {
+    const session = await supabase.auth.getSession();
+    const token = session.data.session?.access_token;
+
     const response = await fetch("/.netlify/functions/webhook", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        mensagem: message,
-        tipo: "texto"
-      })
+      body: JSON.stringify({ mensagem: message, tipo: 'texto' })
     });
 
     const data = await response.json();
@@ -51,7 +45,6 @@ window.sendMessage = async function () {
     aiMsg.textContent = data.resposta || "Erro ao responder.";
     chatBox.appendChild(aiMsg);
     chatBox.scrollTop = chatBox.scrollHeight;
-
   } catch (err) {
     const errorMsg = document.createElement("div");
     errorMsg.className = "ai-message";
