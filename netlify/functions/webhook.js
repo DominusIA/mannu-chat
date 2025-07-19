@@ -1,10 +1,8 @@
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const openai = new OpenAIApi(configuration);
 
 exports.handler = async (event) => {
   try {
@@ -21,7 +19,7 @@ exports.handler = async (event) => {
         size: "1024x1024",
       });
 
-      resposta = completion.data.data[0].url;
+      resposta = completion.data[0].url;
     } else {
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
