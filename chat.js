@@ -1,109 +1,69 @@
-import { supabase } from './supabase.js';
+// chat.js
 
-const messageInput = document.getElementById('message-input');
-const sendButton = document.getElementById('send-button');
-const chatContainer = document.querySelector('.chat-container');
-const fileInput = document.getElementById('file-input');
-const attachButton = document.getElementById('attach-button');
+const userInput = document.getElementById("user-input");
+const sendButton = document.getElementById("send-button");
+const chat = document.getElementById("chat");
+const uploadButton = document.getElementById("upload-button");
 
-const API_URL = 'https://mannu-backend.netlify.app/.netlify/functions/webhook'; // 🔁 Ajuste se necessário
+let primeiraMensagemDoDia = true;
 
-let currentUser = null;
-
-// 🔐 Busca usuário logado
-async function checkUserSession() {
-  const { data, error } = await supabase.auth.getUser();
-  if (data?.user) {
-    currentUser = data.user;
-  } else {
-    window.location.href = 'index.html';
-  }
+// Função para adicionar mensagem na tela
+function adicionarMensagem(texto, classe) {
+  const div = document.createElement("div");
+  div.className = classe;
+  div.innerText = texto;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-// 📥 Envia mensagem de texto
-async function sendMessage(messageText) {
-  if (!messageText.trim()) return;
+// Envia a mensagem para a API da Mannu.AI
+async function enviarMensagem() {
+  const texto = userInput.value.trim();
+  if (texto === "") return;
 
-  addMessageToChat(messageText, 'user');
+  adicionarMensagem(texto, "mensagem-usuario");
+  userInput.value = "";
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
+    const resposta = await fetch("https://mannu-backend.netlify.app/.netlify/functions/webhook", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        numero: currentUser.email,
-        nome: currentUser.user_metadata?.name || currentUser.email,
-        mensagem: messageText
-      })
+        mensagem: texto,
+        plataforma: "web",
+      }),
     });
 
-    const data = await response.json();
-    addMessageToChat(data.resposta || 'Erro ao se comunicar com a Mannu.AI.', 'bot');
-  } catch (err) {
-    console.error('Erro:', err);
-    addMessageToChat('Erro ao se comunicar com a Mannu.AI.', 'bot');
-  }
+    const data = await resposta.json();
 
-  messageInput.value = '';
-}
-
-// 🖼️ Envia imagem
-async function sendImage(file) {
-  const formData = new FormData();
-  formData.append('imagem', file);
-  formData.append('numero', currentUser.email);
-  formData.append('nome', currentUser.user_metadata?.name || currentUser.email);
-
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      body: formData
-    });
-
-    const data = await response.json();
-    addMessageToChat(data.resposta || 'Erro ao se comunicar com a Mannu.AI.', 'bot');
-  } catch (err) {
-    console.error('Erro:', err);
-    addMessageToChat('Erro ao se comunicar com a Mannu.AI.', 'bot');
+    if (resposta.ok && data.resposta) {
+      if (primeiraMensagemDoDia && data.saldo) {
+        adicionarMensagem(
+          `Você ainda pode usar ${data.saldo.mensagensRestantesHoje} mensagens hoje e ${data.saldo.imagensRestantesMes} imagens este mês.`,
+          "mensagem-mannu"
+        );
+        primeiraMensagemDoDia = false;
+      }
+      adicionarMensagem(data.resposta, "mensagem-mannu");
+    } else {
+      adicionarMensagem("Erro ao se comunicar com a Mannu.AI.", "mensagem-mannu");
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+    adicionarMensagem("Erro ao se comunicar com a Mannu.AI.", "mensagem-mannu");
   }
 }
 
-// 🖊️ Adiciona mensagem no chat
-function addMessageToChat(text, sender) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
-  messageDiv.textContent = text;
-  chatContainer.appendChild(messageDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-// ⬆️ Enviar com botão
-sendButton.addEventListener('click', () => {
-  sendMessage(messageInput.value);
-});
-
-// ⬆️ Enviar com Enter
-messageInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    sendMessage(messageInput.value);
+// Eventos
+sendButton.addEventListener("click", enviarMensagem);
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    enviarMensagem();
   }
 });
 
-// 📎 Clique em “Anexar Imagens”
-attachButton.addEventListener('click', () => {
-  fileInput.click();
+uploadButton.addEventListener("click", () => {
+  alert("Envio de imagens ainda não está disponível nesta versão.");
 });
-
-// 📤 Quando imagem for escolhida
-fileInput.addEventListener('change', () => {
-  const file = fileInput.files[0];
-  if (file) {
-    sendImage(file);
-  }
-});
-
-// ▶️ Inicia
-checkUserSession();

@@ -18,21 +18,19 @@
 </head>
 <body>
   <div class="chat-container">
-    <!-- Topo: logo e personagem centralizados -->
     <div class="topo">
       <img src="logo-mannuai.svg" alt="Logo" class="logo" />
       <img src="personagem.png" alt="Personagem" class="personagem" />
     </div>
 
-    <!-- Mensagens -->
     <div id="chat" class="mensagens"></div>
 
-    <!-- Rodapé personalizado -->
-    <div class="input-wrapper">
-      <input type="text" id="message-input" placeholder="Pergunte à Mannu.AI" />
-      <button id="send-button" class="send-button">↑</button>
-      <button id="attach-button" class="attach-button">+ Anexar imagens</button>
-      <input type="file" id="file-input" accept="image/*" hidden />
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Pergunte à Mannu.AI" />
+      <button id="upload-button">+ Anexar imagens</button>
+      <button id="send-button">
+        <span class="arrow">↑</span>
+      </button>
     </div>
   </div>
 
