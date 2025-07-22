@@ -1,9 +1,12 @@
-// script-login.js
+import { supabase } from './supabase.js';
 
-async function signIn() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+export async function signIn() {
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
   const errorMsg = document.getElementById("error-msg");
+
+  const email = emailInput?.value.trim();
+  const password = passwordInput?.value.trim();
 
   errorMsg.textContent = "";
 
@@ -13,17 +16,14 @@ async function signIn() {
   }
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error || !data.session) {
+    if (error) {
       errorMsg.textContent = "E-mail ou senha incorretos.";
     } else {
-      const userId = data.user.id;
-      localStorage.setItem('userId', userId); // Salva o ID do usuário no navegador
-
       window.location.href = "chat.html";
     }
   } catch (err) {
