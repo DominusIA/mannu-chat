@@ -1,177 +1,109 @@
 import { supabase } from './supabase.js';
 
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const chatMessages = document.getElementById('chat-messages');
-const uploadBtn = document.getElementById('upload-btn');
+const messageInput = document.getElementById('message-input');
+const sendButton = document.getElementById('send-button');
+const chatContainer = document.querySelector('.chat-container');
 const fileInput = document.getElementById('file-input');
+const attachButton = document.getElementById('attach-button');
 
-const LIMITE_MENSAGENS_POR_DIA = 25;
-const LIMITE_IMAGENS_POR_MES = 20;
+const API_URL = 'https://mannu-backend.netlify.app/.netlify/functions/webhook'; // 🔁 Ajuste se necessário
 
-let usuario = null;
+let currentUser = null;
 
-// Formata a data para YYYY-MM-DD
-function formatarDataHoje() {
-  const hoje = new Date();
-  return hoje.toISOString().split('T')[0];
-}
-
-// Mostra mensagem no chat
-function appendMessage(text, sender) {
-  const message = document.createElement('div');
-  message.classList.add('message', sender);
-  message.innerText = text;
-  chatMessages.appendChild(message);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Animação de digitando...
-function showTyping() {
-  const typing = document.createElement('div');
-  typing.classList.add('message', 'mannu');
-  typing.id = 'typing';
-  typing.innerText = 'digitando...';
-  chatMessages.appendChild(typing);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function removeTyping() {
-  const typing = document.getElementById('typing');
-  if (typing) typing.remove();
-}
-
-// Busca dados do usuário logado
-async function buscarUsuario() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    appendMessage('Usuário não logado.', 'mannu');
-    throw new Error('Usuário não autenticado');
+// 🔐 Busca usuário logado
+async function checkUserSession() {
+  const { data, error } = await supabase.auth.getUser();
+  if (data?.user) {
+    currentUser = data.user;
+  } else {
+    window.location.href = 'index.html';
   }
-
-  const { data, error } = await supabase
-    .from('usuarios_mannauai')
-    .select('*')
-    .eq('email', user.email)
-    .single();
-
-  if (error || !data) {
-    appendMessage('Erro ao carregar dados do usuário.', 'mannu');
-    throw new Error('Erro ao buscar usuário no Supabase');
-  }
-
-  usuario = data;
 }
 
-// Verifica e reseta contadores se o dia mudou
-async function verificarEAtualizarMensagens() {
-  const hoje = formatarDataHoje();
+// 📥 Envia mensagem de texto
+async function sendMessage(messageText) {
+  if (!messageText.trim()) return;
 
-  // Reset diário
-  if (usuario.ultima_data_mensagem !== hoje) {
-    usuario.mensagens_hoje = 0;
-    usuario.ultima_data_mensagem = hoje;
-    usuario.avisou_mannu = false;
-
-    await supabase
-      .from('usuarios_mannauai')
-      .update({
-        mensagens_hoje: 0,
-        ultima_data_mensagem: hoje,
-        avisou_mannu: false
-      })
-      .eq('email', usuario.email);
-  }
-
-  if (usuario.mensagens_hoje >= LIMITE_MENSAGENS_POR_DIA) {
-    appendMessage(`Você já usou suas ${LIMITE_MENSAGENS_POR_DIA} mensagens hoje. Volte amanhã.`, 'mannu');
-    return false;
-  }
-
-  return true;
-}
-
-// Envia mensagem para API da Mannu
-async function sendMessage() {
-  const mensagem = userInput.value.trim();
-  if (!mensagem) return;
-
-  const permitido = await verificarEAtualizarMensagens();
-  if (!permitido) return;
-
-  appendMessage(mensagem, 'user');
-  userInput.value = '';
-  userInput.style.height = 'auto';
-  showTyping();
+  addMessageToChat(messageText, 'user');
 
   try {
-    const response = await fetch('https://mannu-backend.netlify.app/.netlify/functions/chat', {
+    const response = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: mensagem })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        numero: currentUser.email,
+        nome: currentUser.user_metadata?.name || currentUser.email,
+        mensagem: messageText
+      })
     });
 
     const data = await response.json();
-    removeTyping();
-    appendMessage(data.response, 'mannu');
-
-    // Incrementa uso de mensagem
-    usuario.mensagens_hoje += 1;
-
-    await supabase
-      .from('usuarios_mannauai')
-      .update({ mensagens_hoje: usuario.mensagens_hoje })
-      .eq('email', usuario.email);
-
-    // Aviso diário
-    const hoje = formatarDataHoje();
-    if (!usuario.avisou_mannu || usuario.ultima_data_mensagem !== hoje) {
-      const mensagensRestantes = LIMITE_MENSAGENS_POR_DIA - usuario.mensagens_hoje;
-      const imagensRestantes = LIMITE_IMAGENS_POR_MES - usuario.imagens_mes;
-
-      const aviso = `Você ainda pode usar ${mensagensRestantes} mensagens hoje e ${imagensRestantes} imagens neste mês, viu? Qualquer coisa, tô por aqui! 😉`;
-      appendMessage(aviso, 'mannu');
-
-      usuario.avisou_mannu = true;
-
-      await supabase
-        .from('usuarios_mannauai')
-        .update({ avisou_mannu: true })
-        .eq('email', usuario.email);
-    }
-
+    addMessageToChat(data.resposta || 'Erro ao se comunicar com a Mannu.AI.', 'bot');
   } catch (err) {
-    removeTyping();
-    appendMessage('Erro ao se comunicar com a Mannu.AI.', 'mannu');
+    console.error('Erro:', err);
+    addMessageToChat('Erro ao se comunicar com a Mannu.AI.', 'bot');
+  }
+
+  messageInput.value = '';
+}
+
+// 🖼️ Envia imagem
+async function sendImage(file) {
+  const formData = new FormData();
+  formData.append('imagem', file);
+  formData.append('numero', currentUser.email);
+  formData.append('nome', currentUser.user_metadata?.name || currentUser.email);
+
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+    addMessageToChat(data.resposta || 'Erro ao se comunicar com a Mannu.AI.', 'bot');
+  } catch (err) {
+    console.error('Erro:', err);
+    addMessageToChat('Erro ao se comunicar com a Mannu.AI.', 'bot');
   }
 }
 
-// EVENTOS
-sendBtn.addEventListener('click', sendMessage);
+// 🖊️ Adiciona mensagem no chat
+function addMessageToChat(text, sender) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+  messageDiv.textContent = text;
+  chatContainer.appendChild(messageDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
 
-userInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
+// ⬆️ Enviar com botão
+sendButton.addEventListener('click', () => {
+  sendMessage(messageInput.value);
+});
+
+// ⬆️ Enviar com Enter
+messageInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
     e.preventDefault();
-    sendMessage();
+    sendMessage(messageInput.value);
   }
 });
 
-userInput.addEventListener('input', () => {
-  userInput.style.height = 'auto';
-  userInput.style.height = userInput.scrollHeight + 'px';
-});
-
-uploadBtn.addEventListener('click', () => {
+// 📎 Clique em “Anexar Imagens”
+attachButton.addEventListener('click', () => {
   fileInput.click();
 });
 
+// 📤 Quando imagem for escolhida
 fileInput.addEventListener('change', () => {
   const file = fileInput.files[0];
   if (file) {
-    appendMessage('Imagem recebida! A Mannu.AI vai recriar no Canva.', 'user');
-    // No futuro, lógica de controle de imagens aqui
+    sendImage(file);
   }
 });
 
-// INÍCIO
-buscarUsuario().catch(console.error);
+// ▶️ Inicia
+checkUserSession();

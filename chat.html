@@ -1,3 +1,4 @@
+<!-- chat.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,31 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat - Mannu.AI</title>
   <link rel="stylesheet" href="chat.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Montserrat';
+      src: url('Montserrat-Medium.ttf') format('truetype');
+    }
+    body, input, button {
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
 </head>
 <body>
   <div class="chat-container">
-    <!-- TOPO: Logo + Personagem -->
-    <div class="chat-header">
-      <img src="logo-mannuai.svg" alt="Logo Mannu.AI" class="logo">
-      <img src="mannu-personagem.png" alt="Personagem Mannu" class="avatar">
+    <div class="topo">
+      <img src="logo-mannuai.svg" alt="Logo" class="logo" />
+      <img src="personagem.png" alt="Personagem" class="personagem" />
     </div>
 
-    <!-- ÁREA DE MENSAGENS -->
-    <div id="chat-messages" class="chat-messages"></div>
+    <div id="chat" class="mensagens"></div>
 
-    <!-- RODAPÉ -->
-    <div class="chat-input-container">
-      <div class="input-wrapper">
-        <textarea id="user-input" placeholder="Pergunte à Mannu.AI" rows="1"></textarea>
-        <button id="send-btn">
-          <span class="arrow">➤</span>
-        </button>
-      </div>
-      <button id="upload-btn">+ Anexar imagens</button>
-      <input type="file" id="file-input" accept="image/*" hidden>
+    <div class="input-container">
+      <input type="text" id="user-input" placeholder="Pergunte à Mannu.AI" />
+      <button id="send-button">↑</button>
+      <button id="upload-button">+ Anexar imagens</button>
     </div>
   </div>
 
