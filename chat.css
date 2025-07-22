@@ -1,10 +1,8 @@
-/* chat.css */
-
 body {
   margin: 0;
   padding: 0;
   background-color: #010420;
-  color: #fff;
+  color: white;
   font-family: 'Montserrat', sans-serif;
   display: flex;
   flex-direction: column;
@@ -14,109 +12,110 @@ body {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
   justify-content: space-between;
   align-items: center;
 }
 
 .topo {
-  text-align: center;
-  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
 }
 
 .logo {
-  height: 40px;
+  width: 140px;
   margin-bottom: 10px;
 }
 
 .personagem {
-  height: 90px;
+  width: 120px;
   border-radius: 50%;
-  border: 3px solid #00c8ff;
+  border: 4px solid #00c8ff;
 }
 
 .mensagens {
   flex: 1;
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   padding: 20px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   box-sizing: border-box;
 }
 
-.mensagem {
-  margin: 10px 0;
-  display: flex;
-  max-width: 100%;
-}
-
-.usuario {
-  justify-content: flex-end;
-}
-
-.usuario .texto {
+.user-message {
   background-color: #4252ff;
-  color: #fff;
-  padding: 12px 16px;
-  border-radius: 0px 12px 12px 12px;
-  max-width: 80%;
+  color: white;
+  padding: 10px 15px;
+  max-width: 70%;
+  align-self: flex-end;
+  border-radius: 16px 16px 16px 0px; /* canto inferior esquerdo reto */
+  word-break: break-word;
   white-space: pre-wrap;
 }
 
-.ia .texto {
-  background: none;
-  color: #fff;
-  padding: 12px 0;
-  max-width: 80%;
+.ia-message {
+  color: white;
+  max-width: 70%;
+  align-self: flex-start;
+  word-break: break-word;
   white-space: pre-wrap;
 }
 
 .caixa-input {
-  background-color: #fff;
-  width: 90%;
-  max-width: 650px;
-  border-radius: 20px;
-  padding: 15px;
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 20px;
   box-sizing: border-box;
-  margin-bottom: 20px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  gap: 10px;
 }
 
-#user-input {
+textarea {
   width: 100%;
-  border: none;
   resize: none;
-  outline: none;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
   font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
   color: #010420;
-  background: transparent;
+  box-sizing: border-box;
+  outline: none;
 }
 
 .upload-button {
-  display: inline-block;
   background-color: #c3c3c3;
   color: #010420;
-  padding: 6px 12px;
-  border-radius: 12px;
-  margin-top: 10px;
-  cursor: pointer;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
   font-size: 14px;
+  width: fit-content;
+  cursor: pointer;
 }
 
 #send-button {
-  position: absolute;
-  right: 15px;
-  bottom: 15px;
+  align-self: flex-end;
   background-color: #4252ff;
   color: #010420;
   border: none;
   border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
   cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
 #send-button:hover {
-  opacity: 0.9;
+  transform: scale(1.1);
 }
