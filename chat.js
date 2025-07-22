@@ -1,69 +1,78 @@
 // chat.js
+import { supabase } from './supabase.js';
 
-const userInput = document.getElementById("user-input");
-const sendButton = document.getElementById("send-button");
 const chat = document.getElementById("chat");
-const uploadButton = document.getElementById("upload-button");
+const input = document.getElementById("user-input");
+const sendButton = document.getElementById("send-button");
+const uploadInput = document.getElementById("upload");
 
-let primeiraMensagemDoDia = true;
+const API_URL = "https://mannu-backend.netlify.app/.netlify/functions/webhook";
 
-// Função para adicionar mensagem na tela
-function adicionarMensagem(texto, classe) {
-  const div = document.createElement("div");
-  div.className = classe;
-  div.innerText = texto;
-  chat.appendChild(div);
+function addMensagem(texto, tipo) {
+  const msg = document.createElement("div");
+  msg.className = `mensagem ${tipo}`;
+  const content = document.createElement("div");
+  content.className = "texto";
+  content.textContent = texto;
+  msg.appendChild(content);
+  chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Envia a mensagem para a API da Mannu.AI
-async function enviarMensagem() {
-  const texto = userInput.value.trim();
-  if (texto === "") return;
+function addDigitando() {
+  const msg = document.createElement("div");
+  msg.className = "mensagem ia";
+  msg.id = "digitando";
+  const content = document.createElement("div");
+  content.className = "texto";
+  content.textContent = "Mannu.AI está digitando...";
+  msg.appendChild(content);
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
 
-  adicionarMensagem(texto, "mensagem-usuario");
-  userInput.value = "";
+function removerDigitando() {
+  const digitando = document.getElementById("digitando");
+  if (digitando) digitando.remove();
+}
+
+async function enviarMensagem() {
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  addMensagem(texto, "usuario");
+  input.value = "";
+
+  addDigitando();
+
+  const user = await supabase.auth.getUser();
+  const numero = user.data.user.email;
 
   try {
-    const resposta = await fetch("https://mannu-backend.netlify.app/.netlify/functions/webhook", {
+    const resposta = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        numero,
         mensagem: texto,
-        plataforma: "web",
       }),
     });
 
     const data = await resposta.json();
-
-    if (resposta.ok && data.resposta) {
-      if (primeiraMensagemDoDia && data.saldo) {
-        adicionarMensagem(
-          `Você ainda pode usar ${data.saldo.mensagensRestantesHoje} mensagens hoje e ${data.saldo.imagensRestantesMes} imagens este mês.`,
-          "mensagem-mannu"
-        );
-        primeiraMensagemDoDia = false;
-      }
-      adicionarMensagem(data.resposta, "mensagem-mannu");
-    } else {
-      adicionarMensagem("Erro ao se comunicar com a Mannu.AI.", "mensagem-mannu");
-    }
-  } catch (erro) {
-    console.error("Erro:", erro);
-    adicionarMensagem("Erro ao se comunicar com a Mannu.AI.", "mensagem-mannu");
+    removerDigitando();
+    addMensagem(data.resposta || "Erro ao responder.", "ia");
+  } catch (error) {
+    removerDigitando();
+    addMensagem("Erro ao se comunicar com a Mannu.AI.", "ia");
+    console.error(error);
   }
 }
 
-// Eventos
 sendButton.addEventListener("click", enviarMensagem);
-userInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
+
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
     enviarMensagem();
   }
-});
-
-uploadButton.addEventListener("click", () => {
-  alert("Envio de imagens ainda não está disponível nesta versão.");
 });

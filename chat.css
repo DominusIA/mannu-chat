@@ -4,8 +4,8 @@ body {
   margin: 0;
   padding: 0;
   background-color: #010420;
+  color: #fff;
   font-family: 'Montserrat', sans-serif;
-  color: #ffffff;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -15,106 +15,108 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .topo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
   padding-top: 20px;
-  gap: 10px;
 }
 
 .logo {
   height: 40px;
-  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .personagem {
-  height: 100px;
-  width: 100px;
+  height: 90px;
   border-radius: 50%;
-  margin-top: 5px;
+  border: 3px solid #00c8ff;
 }
 
 .mensagens {
   flex: 1;
+  width: 100%;
+  max-width: 600px;
   padding: 20px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  box-sizing: border-box;
 }
 
-.mensagem-usuario {
-  align-self: flex-end;
+.mensagem {
+  margin: 10px 0;
+  display: flex;
+  max-width: 100%;
+}
+
+.usuario {
+  justify-content: flex-end;
+}
+
+.usuario .texto {
   background-color: #4252ff;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 0px 15px 0px 15px;
-  max-width: 70%;
-  word-wrap: break-word;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 0px 12px 12px 12px;
+  max-width: 80%;
+  white-space: pre-wrap;
 }
 
-.mensagem-mannu {
-  align-self: flex-start;
-  background-color: #1a1a2e;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 15px 0px 15px 0px;
-  max-width: 70%;
-  word-wrap: break-word;
+.ia .texto {
+  background: none;
+  color: #fff;
+  padding: 12px 0;
+  max-width: 80%;
+  white-space: pre-wrap;
 }
 
-.input-container {
-  background-color: #000333;
-  padding: 20px;
-  border-top: 1px solid #1c1c3d;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  border-radius: 25px 25px 0 0;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+.caixa-input {
+  background-color: #fff;
+  width: 90%;
+  max-width: 650px;
+  border-radius: 20px;
+  padding: 15px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  position: relative;
 }
 
 #user-input {
   width: 100%;
-  padding: 15px;
   border: none;
-  border-radius: 12px;
+  resize: none;
+  outline: none;
   font-size: 16px;
   color: #010420;
-  background-color: #ffffff;
+  background: transparent;
+}
+
+.upload-button {
+  display: inline-block;
+  background-color: #c3c3c3;
+  color: #010420;
+  padding: 6px 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 #send-button {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
   background-color: #4252ff;
   color: #010420;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 35px;
+  height: 35px;
   font-size: 18px;
-  align-self: flex-end;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 #send-button:hover {
-  transform: translateY(-2px);
-  cursor: pointer;
-}
-
-#upload-button {
-  background-color: #000;
-  color: #ffffff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 14px;
-  margin-top: -5px;
-  cursor: pointer;
+  opacity: 0.9;
 }

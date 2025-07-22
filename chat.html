@@ -19,18 +19,17 @@
 <body>
   <div class="chat-container">
     <div class="topo">
-      <img src="logo-mannuai.svg" alt="Logo" class="logo" />
-      <img src="personagem.png" alt="Personagem" class="personagem" />
+      <img src="logo-mannuai.svg" alt="Logo da Mannu.AI" class="logo" />
+      <img src="mannu-personagem.png" alt="Personagem Mannu" class="personagem" />
     </div>
 
     <div id="chat" class="mensagens"></div>
 
-    <div class="input-area">
-      <input type="text" id="user-input" placeholder="Pergunte à Mannu.AI" />
-      <button id="upload-button">+ Anexar imagens</button>
-      <button id="send-button">
-        <span class="arrow">↑</span>
-      </button>
+    <div class="caixa-input">
+      <textarea id="user-input" placeholder="Pergunte à Mannu.AI"></textarea>
+      <label for="upload" class="upload-button">+ Anexar imagens</label>
+      <input type="file" id="upload" accept="image/*" style="display: none" />
+      <button id="send-button">↑</button>
     </div>
   </div>
 
