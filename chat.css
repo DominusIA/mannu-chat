@@ -19,12 +19,15 @@ body {
 .chat-header {
   text-align: center;
   padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .logo {
   width: 80px;
   height: auto;
-  margin-bottom: 10px;
 }
 
 .avatar {
@@ -105,12 +108,26 @@ body {
 
 #send-btn {
   background-color: #4252ff;
-  color: #010420;
   border: none;
-  padding: 10px 14px;
   border-radius: 50%;
-  font-size: 16px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: transform 0.15s ease-in-out;
+}
+
+#send-btn:hover {
+  transform: scale(1.1);
+}
+
+#send-btn .arrow {
+  color: #010420;
+  font-size: 18px;
+  transform: rotate(45deg);
+  display: inline-block;
 }
 
 #upload-btn {
@@ -138,7 +155,11 @@ body {
   }
 
   #send-btn {
-    padding: 9px 12px;
-    font-size: 14px;
+    width: 34px;
+    height: 34px;
+  }
+
+  #send-btn .arrow {
+    font-size: 16px;
   }
 }

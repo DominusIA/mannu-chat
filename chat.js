@@ -105,4 +105,73 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const response
+    const response = await fetch('https://mannu-backend.netlify.app/.netlify/functions/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: mensagem })
+    });
+
+    const data = await response.json();
+    removeTyping();
+    appendMessage(data.response, 'mannu');
+
+    // Incrementa uso de mensagem
+    usuario.mensagens_hoje += 1;
+
+    await supabase
+      .from('usuarios_mannauai')
+      .update({ mensagens_hoje: usuario.mensagens_hoje })
+      .eq('email', usuario.email);
+
+    // Aviso diário
+    const hoje = formatarDataHoje();
+    if (!usuario.avisou_mannu || usuario.ultima_data_mensagem !== hoje) {
+      const mensagensRestantes = LIMITE_MENSAGENS_POR_DIA - usuario.mensagens_hoje;
+      const imagensRestantes = LIMITE_IMAGENS_POR_MES - usuario.imagens_mes;
+
+      const aviso = `Você ainda pode usar ${mensagensRestantes} mensagens hoje e ${imagensRestantes} imagens neste mês, viu? Qualquer coisa, tô por aqui! 😉`;
+      appendMessage(aviso, 'mannu');
+
+      usuario.avisou_mannu = true;
+
+      await supabase
+        .from('usuarios_mannauai')
+        .update({ avisou_mannu: true })
+        .eq('email', usuario.email);
+    }
+
+  } catch (err) {
+    removeTyping();
+    appendMessage('Erro ao se comunicar com a Mannu.AI.', 'mannu');
+  }
+}
+
+// EVENTOS
+sendBtn.addEventListener('click', sendMessage);
+
+userInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+userInput.addEventListener('input', () => {
+  userInput.style.height = 'auto';
+  userInput.style.height = userInput.scrollHeight + 'px';
+});
+
+uploadBtn.addEventListener('click', () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+  if (file) {
+    appendMessage('Imagem recebida! A Mannu.AI vai recriar no Canva.', 'user');
+    // No futuro, lógica de controle de imagens aqui
+  }
+});
+
+// INÍCIO
+buscarUsuario().catch(console.error);
