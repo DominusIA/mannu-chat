@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai'; // ✅ forma correta para SDK v4+
+import OpenAI from 'openai';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -11,139 +11,116 @@ const openai = new OpenAI({
 });
 
 export async function handler(event, context) {
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Método não permitido' })
+    };
+  }
+
   try {
-    if (event.httpMethod !== 'POST') {
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ resposta: 'Método não permitido.' }),
-      };
-    }
+    const { userId, message, image } = JSON.parse(event.body);
 
-    const headers = event.headers;
-    const authHeader = headers.authorization || '';
-    const token = authHeader.replace('Bearer ', '');
-    if (!token) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ resposta: 'Token não fornecido.' }),
-      };
-    }
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ resposta: 'Usuário não autenticado.' }),
-      };
-    }
-
-    const email = user.email;
-    const id = user.id;
-
-    const body = JSON.parse(event.body);
-    const { mensagem, tipo } = body;
-
-    if (!mensagem || !tipo) {
+    if (!userId || (!message && !image)) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ resposta: 'Mensagem ou tipo ausente.' }),
+        body: JSON.stringify({ error: 'Dados incompletos' })
       };
     }
 
-    const { data: existente } = await supabase
-      .from('usuarios')
+    // Busca o cliente no Supabase
+    let { data: user, error } = await supabase
+      .from('clientes')
       .select('*')
-      .eq('id', id)
+      .eq('id', userId)
       .single();
 
+    if (error || !user) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: 'Usuário não encontrado' })
+      };
+    }
+
+    // Atualizações de uso
     const hoje = new Date().toISOString().split('T')[0];
+    const agora = new Date();
+    const primeiroDiaDoMes = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-01`;
 
-    if (!existente) {
-      await supabase.from('usuarios').insert({
-        id,
-        email,
-        mensagens_hoje: 0,
-        imagens_mes: 0,
-        ultimo_uso: hoje
-      });
-    } else {
-      const ultimoUso = existente.ultimo_uso?.toISOString().split('T')[0];
-      if (ultimoUso !== hoje) {
-        await supabase
-          .from('usuarios')
-          .update({ mensagens_hoje: 0, ultimo_uso: hoje })
-          .eq('id', id);
+    const updates = {};
+    if (user.data_ultimo_uso !== hoje) {
+      updates.mensagens_restantes = 25;
+      updates.data_ultimo_uso = hoje;
+    }
+    if (user.data_reset_imagens !== primeiroDiaDoMes) {
+      updates.imagens_restantes = 20;
+      updates.data_reset_imagens = primeiroDiaDoMes;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await supabase
+        .from('clientes')
+        .update(updates)
+        .eq('id', userId);
+      user = { ...user, ...updates };
+    }
+
+    // Geração de imagem
+    if (image || message.toLowerCase().includes('gerar imagem')) {
+      if (user.imagens_restantes <= 0) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ response: 'Limite de imagens atingido. Tente novamente no próximo mês.' })
+        };
       }
-    }
 
-    const { data: usuario } = await supabase
-      .from('usuarios')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (tipo === 'texto' && usuario.mensagens_hoje >= 25) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          resposta: 'Você atingiu o limite diário de 25 mensagens. Tente novamente amanhã.'
-        }),
-      };
-    }
-
-    if (tipo === 'imagem' && usuario.imagens_mes >= 20) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          resposta: 'Você atingiu o limite mensal de 20 imagens. Tente novamente no próximo mês.'
-        }),
-      };
-    }
-
-    let respostaFinal = '';
-
-    if (tipo === 'texto') {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: mensagem }]
-      });
-
-      respostaFinal = completion.choices[0].message.content;
-
-      await supabase
-        .from('usuarios')
-        .update({ mensagens_hoje: usuario.mensagens_hoje + 1 })
-        .eq('id', id);
-    }
-
-    if (tipo === 'imagem') {
-      const image = await openai.images.generate({
+      const prompt = message.replace(/gerar imagem/i, '').trim() || 'Imagem criativa solicitada';
+      const imageResponse = await openai.images.generate({
         model: 'dall-e-3',
-        prompt: mensagem,
-        n: 1,
-        size: '1024x1024'
+        prompt,
+        size: '1024x1024',
+        n: 1
       });
 
-      respostaFinal = image.data[0].url;
-
       await supabase
-        .from('usuarios')
-        .update({ imagens_mes: usuario.imagens_mes + 1 })
-        .eq('id', id);
+        .from('clientes')
+        .update({ imagens_restantes: user.imagens_restantes - 1 })
+        .eq('id', userId);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ response: imageResponse.data[0].url })
+      };
     }
+
+    // Geração de texto
+    if (user.mensagens_restantes <= 0) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ response: 'Você atingiu o limite diário de mensagens. Tente novamente amanhã.' })
+      };
+    }
+
+    const chatCompletion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: message }]
+    });
+
+    await supabase
+      .from('clientes')
+      .update({ mensagens_restantes: user.mensagens_restantes - 1 })
+      .eq('id', userId);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ resposta: respostaFinal }),
+      body: JSON.stringify({ response: chatCompletion.choices[0].message.content })
     };
-  } catch (error) {
-    console.error('❌ Erro no webhook:', error);
+
+  } catch (err) {
+    console.error(err);
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        resposta: 'Erro ao gerar resposta.',
-        erro: error.message
-      }),
+      body: JSON.stringify({ error: 'Erro interno no servidor' })
     };
   }
 }

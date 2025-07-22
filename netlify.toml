@@ -1,9 +1,10 @@
-[build]
-  functions = "netlify/functions"
-
 [functions]
+  directory = "netlify/functions"
   node_bundler = "esbuild"
+
+[build]
+  # Removido o comando para evitar loop com `netlify build`
+  publish = "."
 
 [dev]
   functions = "netlify/functions"
-  port = 8888

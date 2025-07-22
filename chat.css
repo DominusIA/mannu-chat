@@ -1,102 +1,144 @@
-@font-face {
-  font-family: 'Montserrat';
-  src: url('Montserrat-Medium.ttf') format('truetype');
-}
-
 body {
   margin: 0;
-  padding: 0;
-  background-color: #010420;
   font-family: 'Montserrat', sans-serif;
+  background-color: #010420;
+  color: white;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
-.chat-wrapper {
+.chat-container {
   width: 100%;
-  max-width: 480px;
-  height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
+  max-width: 720px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 100vh;
+  position: relative;
+}
+
+.chat-header {
+  text-align: center;
+  padding-top: 20px;
 }
 
 .logo {
-  width: 160px;
-  margin: 20px auto 10px;
+  width: 80px;
+  height: auto;
+  margin-bottom: 10px;
 }
 
-.character {
-  width: 120px;
-  margin-bottom: 20px;
+.avatar {
+  width: 100px;
+  height: auto;
+  border-radius: 50%;
 }
 
-.chat-box {
+.chat-messages {
   flex: 1;
-  width: 100%;
   overflow-y: auto;
-  margin-bottom: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.message {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background-color: #4252ff;
+  align-self: flex-end;
+  color: #ffffff;
+  border-bottom-right-radius: 0;
+}
+
+.message.mannu {
+  background: none;
+  align-self: flex-start;
+  color: #ffffff;
+}
+
+.chat-input-container {
+  background-color: #01073d;
+  padding: 12px 16px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 720px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.user-message,
-.ai-message {
-  max-width: 80%;
-  padding: 12px;
-  border-radius: 16px;
-  font-size: 16px;
-  word-wrap: break-word;
-}
-
-.user-message {
-  align-self: flex-start;
-  background-color: #ffffff;
-  color: #010420;
-}
-
-.ai-message {
-  align-self: flex-end;
-  background-color: #4252ff;
-  color: #ffffff;
-}
-
-.input-area {
+.input-wrapper {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
 }
 
-input#user-input {
+#user-input {
   flex: 1;
-  padding: 12px;
-  border-radius: 999px;
+  resize: none;
   border: none;
-  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  max-height: 200px;
+  overflow-y: auto;
   background-color: #ffffff;
   color: #010420;
 }
 
-.send-button {
-  background-color: #4252ff;
-  border: none;
-  border-radius: 999px;
-  width: 40px;
-  height: 40px;
-  padding: 8px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#user-input:focus {
+  outline: none;
 }
 
-.send-button img {
-  width: 16px;
-  height: 16px;
+#send-btn {
+  background-color: #4252ff;
+  color: #010420;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#upload-btn {
+  background-color: #010420;
+  color: white;
+  border: 1px solid #4252ff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+#upload-btn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .chat-messages {
+    padding: 12px;
+  }
+
+  #user-input {
+    font-size: 13px;
+  }
+
+  #send-btn {
+    padding: 9px 12px;
+    font-size: 14px;
+  }
 }
