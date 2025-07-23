@@ -13,7 +13,22 @@ export default async (req, context) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const body = await req.json();
+    console.log("🔍 Corpo recebido:", JSON.stringify(body, null, 2));
+
+    const prompt = body?.prompt || body?.message || body?.content;
+
+    if (!prompt || typeof prompt !== 'string') {
+      console.error("⚠️ Prompt inválido ou vazio:", prompt);
+      return new Response(JSON.stringify({ resposta: "Mensagem inválida." }), {
+        status: 400,
+        headers: {
+          ...headers,
+          "Content-Type": "application/json"
+        }
+      });
+    }
+
     console.log("🔹 Prompt recebido:", prompt);
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -29,7 +44,7 @@ export default async (req, context) => {
     });
 
     const data = await response.json();
-    console.log("🔸 Resposta da OpenAI:", data);
+    console.log("🔸 Resposta da OpenAI:", JSON.stringify(data, null, 2));
 
     const resposta = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
