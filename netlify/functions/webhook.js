@@ -13,23 +13,16 @@ export default async (req, context) => {
   }
 
   try {
-    const body = await req.json();
-    console.log("🔍 Corpo recebido:", JSON.stringify(body, null, 2));
+    const { mensagem } = await req.json();
+    console.log("📥 Corpo recebido:", mensagem);
 
-    const prompt = body?.prompt || body?.message || body?.content;
-
-    if (!prompt || typeof prompt !== 'string') {
-      console.error("⚠️ Prompt inválido ou vazio:", prompt);
+    if (!mensagem || typeof mensagem !== "string") {
+      console.error("⚠️ Prompt inválido ou vazio:", mensagem);
       return new Response(JSON.stringify({ resposta: "Mensagem inválida." }), {
         status: 400,
-        headers: {
-          ...headers,
-          "Content-Type": "application/json"
-        }
+        headers: { ...headers, "Content-Type": "application/json" }
       });
     }
-
-    console.log("🔹 Prompt recebido:", prompt);
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -39,12 +32,12 @@ export default async (req, context) => {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }]
+        messages: [{ role: "user", content: mensagem }]
       })
     });
 
     const data = await response.json();
-    console.log("🔸 Resposta da OpenAI:", JSON.stringify(data, null, 2));
+    console.log("🔸 Resposta da OpenAI:", data);
 
     const resposta = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
