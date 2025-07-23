@@ -6,7 +6,8 @@ const input = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 const uploadInput = document.getElementById("upload");
 
-const API_URL = "https://mannu-backend.netlify.app/.netlify/functions/webhook";
+// 🔄 Atualizado para o domínio correto:
+const API_URL = "https://mannuai.netlify.app/.netlify/functions/webhook";
 
 function addMensagem(texto, tipo) {
   const msg = document.createElement("div");
