@@ -1,11 +1,10 @@
 export default async (req, context) => {
   const headers = {
-    'Access-Control-Allow-Origin': 'https://mannuai.netlify.app', // ✅ Somente seu site pode acessar
+    'Access-Control-Allow-Origin': 'https://mannuai.netlify.app',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
-  // ✅ Requisições pré-flight (CORS)
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -15,6 +14,7 @@ export default async (req, context) => {
 
   try {
     const { prompt } = await req.json();
+    console.log("🔹 Prompt recebido:", prompt);
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -29,7 +29,7 @@ export default async (req, context) => {
     });
 
     const data = await response.json();
-    console.log("🔍 Resposta da OpenAI:", data); // <- DEBUG
+    console.log("🔸 Resposta da OpenAI:", data);
 
     const resposta = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
