@@ -11,8 +11,76 @@
       font-family: 'Montserrat';
       src: url('Montserrat-Medium.ttf') format('truetype');
     }
-    body, input, button {
+    body, input, button, textarea {
       font-family: 'Montserrat', sans-serif;
+    }
+
+    .topo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .topo img.logo {
+      width: 120px;
+      margin-bottom: 10px;
+    }
+    .topo img.personagem {
+      width: 140px;
+      height: 140px;
+    }
+
+    .caixa-input {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffffff;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 700px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #user-input {
+      width: 100%;
+      resize: none;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      line-height: 20px;
+      max-height: 120px; /* máx 4 linhas */
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .upload-button {
+      background-color: #c3c3c3;
+      color: #010420;
+      font-size: 14px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    #send-button {
+      position: absolute;
+      right: 20px;
+      bottom: 25px;
+      background-color: #4252ff;
+      color: #ffffff;
+      border: none;
+      border-radius: 80%;
+      width: 36px;
+      height: 36px;
+      font-size: 25px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -26,7 +94,7 @@
     <div id="chat" class="mensagens"></div>
 
     <div class="caixa-input">
-      <textarea id="user-input" placeholder="Pergunte à Mannu.AI"></textarea>
+      <textarea id="user-input" placeholder="Pergunte à Mannu.AI" rows="1"></textarea>
       <label for="upload" class="upload-button">+ Anexar imagens</label>
       <input type="file" id="upload" accept="image/*" style="display: none" />
       <button id="send-button">↑</button>
