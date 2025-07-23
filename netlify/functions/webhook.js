@@ -29,9 +29,9 @@ export default async (req, context) => {
     });
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
+    const resposta = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
-    return new Response(JSON.stringify({ reply }), {
+    return new Response(JSON.stringify({ resposta }), {
       status: 200,
       headers: {
         ...headers,
@@ -40,7 +40,7 @@ export default async (req, context) => {
     });
   } catch (error) {
     console.error("Erro ao processar a requisição:", error);
-    return new Response(JSON.stringify({ error: "Erro interno ao processar." }), {
+    return new Response(JSON.stringify({ resposta: "Erro interno ao processar." }), {
       status: 500,
       headers: {
         ...headers,
