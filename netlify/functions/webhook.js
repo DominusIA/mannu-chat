@@ -29,6 +29,8 @@ export default async (req, context) => {
     });
 
     const data = await response.json();
+    console.log("🔍 Resposta da OpenAI:", data); // <- DEBUG
+
     const resposta = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
     return new Response(JSON.stringify({ resposta }), {
@@ -39,7 +41,7 @@ export default async (req, context) => {
       }
     });
   } catch (error) {
-    console.error("Erro ao processar a requisição:", error);
+    console.error("❌ Erro ao processar a requisição:", error);
     return new Response(JSON.stringify({ resposta: "Erro interno ao processar." }), {
       status: 500,
       headers: {
