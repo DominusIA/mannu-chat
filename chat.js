@@ -13,6 +13,12 @@ function addMensagem(texto, tipo) {
   msg.className = `mensagem ${tipo}`;
   const content = document.createElement("div");
   content.className = "texto";
+
+  // Aplica classe de estilo específica para cliente (bloco) ou IA (apenas texto)
+  if (tipo === "usuario") {
+    content.classList.add("usuario-bolha");
+  }
+
   content.textContent = texto;
   msg.appendChild(content);
   chat.appendChild(msg);
