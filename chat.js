@@ -42,6 +42,23 @@ function removerDigitando() {
   if (digitando) digitando.remove();
 }
 
+function addGerandoImagem() {
+  const msg = document.createElement("div");
+  msg.className = "mensagem ia";
+  msg.id = "gerando-imagem";
+  const content = document.createElement("div");
+  content.className = "texto";
+  content.textContent = "🖼️ Gerando imagem personalizada...";
+  msg.appendChild(content);
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removerGerandoImagem() {
+  const loading = document.getElementById("gerando-imagem");
+  if (loading) loading.remove();
+}
+
 async function enviarMensagem() {
   const texto = input.value.trim();
   if (!texto) return;
@@ -54,6 +71,17 @@ async function enviarMensagem() {
   const user = await supabase.auth.getUser();
   const numero = user.data.user.email;
 
+  const ehImagem = texto.toLowerCase().includes("recriar") ||
+                   texto.toLowerCase().includes("refazer") ||
+                   texto.toLowerCase().includes("criar uma imagem") ||
+                   texto.toLowerCase().includes("cria uma arte") ||
+                   texto.toLowerCase().includes("fazer uma arte") ||
+                   texto.toLowerCase().includes("imagem com fundo");
+
+  if (ehImagem) {
+    addGerandoImagem();
+  }
+
   try {
     const resposta = await fetch(API_URL, {
       method: "POST",
@@ -65,10 +93,14 @@ async function enviarMensagem() {
     });
 
     const data = await resposta.json();
+
     removerDigitando();
+    removerGerandoImagem();
+
     addMensagem(data.resposta || "Erro ao responder.", "ia");
   } catch (error) {
     removerDigitando();
+    removerGerandoImagem();
     addMensagem("Erro ao se comunicar com a Mannu.AI.", "ia");
     console.error(error);
   }
@@ -83,7 +115,7 @@ input.addEventListener("keydown", (e) => {
   }
 });
 
-// 📸 NOVO: tratamento com preview da imagem no chat
+// 📸 Preview de imagem e aciona IA com mensagem automática
 uploadInput.addEventListener("change", async (event) => {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
@@ -112,6 +144,7 @@ uploadInput.addEventListener("change", async (event) => {
   reader.readAsDataURL(arquivo);
 
   addDigitando();
+  addGerandoImagem();
 
   const user = await supabase.auth.getUser();
   const numero = user.data.user.email;
@@ -128,9 +161,11 @@ uploadInput.addEventListener("change", async (event) => {
 
     const data = await resposta.json();
     removerDigitando();
+    removerGerandoImagem();
     addMensagem(data.resposta || "Erro ao responder.", "ia");
   } catch (error) {
     removerDigitando();
+    removerGerandoImagem();
     addMensagem("Erro ao processar a imagem.", "ia");
     console.error(error);
   }
