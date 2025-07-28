@@ -19,16 +19,19 @@ export default async (req, context) => {
     console.log("📥 Corpo recebido:", mensagem);
 
     if (!mensagem || typeof mensagem !== "string") {
-      console.error("⚠️ Prompt inválido ou vazio:", mensagem);
+      console.error("⚠️ Mensagem inválida:", mensagem);
       return new Response(JSON.stringify({ resposta: "Mensagem inválida." }), {
         status: 400,
         headers: { ...headers, "Content-Type": "application/json" }
       });
     }
 
-    // 🔍 Verifica se é um pedido de imagem
+    // 🔍 Detecta se é pedido de imagem
     const promptImagem = mensagem.toLowerCase();
-    const palavrasChave = ["recriar", "refazer", "imagem", "cria uma arte", "fazer uma arte", "arte com fundo", "fundo vermelho", "fundo azul"];
+    const palavrasChave = [
+      "recriar", "refazer", "imagem", "cria uma arte", "fazer uma arte", "arte com fundo",
+      "fundo vermelho", "fundo azul", "faça essa imagem", "desenhe", "crie essa imagem", "referência"
+    ];
     const gerarImagem = palavrasChave.some(p => promptImagem.includes(p));
 
     if (gerarImagem) {
@@ -57,7 +60,7 @@ export default async (req, context) => {
       });
     }
 
-    // 💬 Caso contrário, usa GPT-3.5 para texto
+    // 💬 Se não for imagem, usa GPT-3.5 para texto
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -81,7 +84,7 @@ export default async (req, context) => {
       headers: { ...headers, "Content-Type": "application/json" }
     });
   } catch (error) {
-    console.error("❌ Erro ao processar a requisição:", error);
+    console.error("❌ Erro ao processar requisição:", error);
     return new Response(JSON.stringify({ resposta: "Erro interno ao processar." }), {
       status: 500,
       headers: { ...headers, "Content-Type": "application/json" }
