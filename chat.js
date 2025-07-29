@@ -1,14 +1,13 @@
 import { supabase } from "./supabase.js";
 
-const chatContainer = document.getElementById("chat-container");
-const inputMensagem = document.getElementById("mensagem");
-const botaoEnviar = document.getElementById("enviar");
-const botaoUpload = document.getElementById("upload-imagem");
-const previewImagem = document.getElementById("preview-imagem");
-const fileInput = document.getElementById("file-input");
+const chatContainer = document.getElementById("chat");
+const inputMensagem = document.getElementById("user-input");
+const botaoEnviar = document.getElementById("send-button");
+const fileInput = document.getElementById("upload");
+const previewImagem = document.getElementById("preview-imagem"); // Caso queira usar preview futuro
 
 let imagemSelecionada = null;
-const sessionId = crypto.randomUUID(); // cria uma sessão única para o cliente
+const sessionId = crypto.randomUUID(); // Sessão única
 
 // Mostra imagem antes de enviar
 fileInput.addEventListener("change", () => {
@@ -16,12 +15,14 @@ fileInput.addEventListener("change", () => {
   if (file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
     const reader = new FileReader();
     reader.onload = () => {
-      previewImagem.innerHTML = `<img src="${reader.result}" class="preview-img" />`;
+      const preview = document.createElement("div");
+      preview.innerHTML = `<img src="${reader.result}" class="preview-img" />`;
+      chatContainer.appendChild(preview);
       imagemSelecionada = file;
     };
     reader.readAsDataURL(file);
   } else {
-    previewImagem.innerHTML = "<p style='color: red;'>Formato não suportado.</p>";
+    adicionarMensagem("mannu", "❌ Formato de imagem não suportado. Envie JPG, JPEG ou PNG.");
     imagemSelecionada = null;
   }
 });
@@ -33,7 +34,6 @@ botaoEnviar.addEventListener("click", async () => {
 
   adicionarMensagem("usuário", texto);
   inputMensagem.value = "";
-  previewImagem.innerHTML = "";
 
   if (imagemSelecionada) {
     const { data, error } = await supabase.storage
@@ -51,10 +51,13 @@ botaoEnviar.addEventListener("click", async () => {
 
     const url = supabase.storage.from("imagens").getPublicUrl(data.path).data.publicUrl;
 
-    adicionarMensagem("mannu", "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)");
+    adicionarMensagem(
+      "mannu",
+      "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)"
+    );
     imagemSelecionada = null;
 
-    // Salva link temporariamente para envio após resposta
+    // Salva link temporariamente
     sessionStorage.setItem("imagem-pendente", url);
     return;
   }
@@ -75,7 +78,7 @@ botaoEnviar.addEventListener("click", async () => {
 
   const dados = await resposta.json();
 
-  // Se a resposta indicar que está gerando uma imagem, mostra aviso e faz nova chamada
+  // Caso esteja gerando imagem
   if (dados.gerandoImagem && dados.promptImagem) {
     atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
 
@@ -83,7 +86,7 @@ botaoEnviar.addEventListener("click", async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // substitua por forma segura se não estiver no backend
+        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // Substitua de forma segura no backend
       },
       body: JSON.stringify({
         model: "dall-e-3",
@@ -121,6 +124,7 @@ function adicionarMensagem(remetente, texto) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+// Atualiza última resposta da Mannu
 function atualizarUltimaMensagem(remetente, novoTexto) {
   const mensagens = document.querySelectorAll(`.mensagem.${remetente}`);
   const ultima = mensagens[mensagens.length - 1];
