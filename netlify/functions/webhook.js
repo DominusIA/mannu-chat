@@ -1,5 +1,7 @@
 import promptMannu from './prompt-mannu.js';
 
+const TEMP_IMAGE_STATE = new Map(); // memória temporária por sessão
+
 export default async (req, context) => {
   const headers = {
     'Access-Control-Allow-Origin': 'https://mannuai.netlify.app',
@@ -8,80 +10,66 @@ export default async (req, context) => {
   };
 
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers
-    });
+    return new Response(null, { status: 204, headers });
   }
 
   try {
-    const { mensagem } = await req.json();
-    console.log("📥 Corpo recebido:", mensagem);
+    const { mensagem, sessionId } = await req.json();
+    console.log("📥 Mensagem recebida:", mensagem);
 
     if (!mensagem || typeof mensagem !== "string") {
-      console.error("⚠️ Mensagem inválida:", mensagem);
       return new Response(JSON.stringify({ resposta: "Mensagem inválida." }), {
         status: 400,
         headers: { ...headers, "Content-Type": "application/json" }
       });
     }
 
-    const promptImagem = mensagem.toLowerCase();
-    const contemLinkImagem = /(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))/i.test(mensagem);
-    const palavrasChave = [
-      "recriar", "refazer", "imagem", "cria uma arte", "fazer uma arte",
-      "arte com fundo", "fundo vermelho", "fundo azul", "faça essa imagem",
-      "desenhe", "crie essa imagem", "referência"
-    ];
-    const contemPedidoImagem = palavrasChave.some(p => promptImagem.includes(p));
+    const lower = mensagem.toLowerCase();
+    const isImageURL = /(https?:\/\/.*\.(?:png|jpg|jpeg))/.test(mensagem);
 
-    // 📷 Caso contenha um link de imagem, mas não detalhes do que fazer
-    if (contemLinkImagem && !contemPedidoImagem) {
+    // Caso 1: link de imagem → interrompe e pergunta
+    if (isImageURL) {
+      TEMP_IMAGE_STATE.set(sessionId, mensagem.trim());
       return new Response(JSON.stringify({
-        resposta: "🖼️ Recebi sua imagem de referência!\nQuer que eu crie igual ou deseja mudar algo como cor, texto ou adicionar seu número?"
+        resposta: "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)"
       }), {
         status: 200,
         headers: { ...headers, "Content-Type": "application/json" }
       });
     }
 
-    // 🧠 Se for pedido para gerar imagem diretamente
-    if (contemPedidoImagem) {
-      const resposta = await fetch("https://api.openai.com/v1/images/generations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "dall-e-3",
-          prompt: mensagem,
-          n: 1,
-          size: "1024x1024"
-        })
+    // Caso 2: o cliente respondeu depois de enviar a imagem
+    if (TEMP_IMAGE_STATE.has(sessionId)) {
+      const img = TEMP_IMAGE_STATE.get(sessionId);
+      TEMP_IMAGE_STATE.delete(sessionId); // limpa estado
+
+      return new Response(JSON.stringify({ resposta: "🖼️ Gerando imagem..." }), {
+        status: 200,
+        headers: { ...headers, "Content-Type": "application/json" },
+        // o front deve aguardar essa resposta e chamar de novo com o novo prompt
       });
-
-      const data = await resposta.json();
-      const imageUrl = data.data?.[0]?.url;
-
-      if (imageUrl) {
-        return new Response(JSON.stringify({
-          resposta: `<img src="${imageUrl}" alt="Imagem gerada" style="max-width: 100%; border-radius: 10px;" />`
-        }), {
-          status: 200,
-          headers: { ...headers, "Content-Type": "application/json" }
-        });
-      } else {
-        return new Response(JSON.stringify({
-          resposta: "❌ Não consegui gerar a imagem. Tente reformular o pedido."
-        }), {
-          status: 200,
-          headers: { ...headers, "Content-Type": "application/json" }
-        });
-      }
     }
 
-    // ✏️ Resposta de texto normal via GPT-3.5
+    // Caso 3: pedido claro de imagem por texto
+    const palavrasChave = [
+      "recriar", "refazer", "imagem", "cria uma arte", "fazer uma arte", "arte com fundo",
+      "fundo vermelho", "fundo azul", "faça essa imagem", "desenhe", "crie essa imagem", "referência"
+    ];
+    const gerarImagem = palavrasChave.some(p => lower.includes(p));
+
+    if (gerarImagem) {
+      const respostaTemp = {
+        resposta: "🖼️ Gerando imagem...",
+        gerandoImagem: true,
+        promptImagem: mensagem
+      };
+      return new Response(JSON.stringify(respostaTemp), {
+        status: 200,
+        headers: { ...headers, "Content-Type": "application/json" }
+      });
+    }
+
+    // Caso 4: geração de texto normal
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -106,7 +94,7 @@ export default async (req, context) => {
     });
 
   } catch (error) {
-    console.error("❌ Erro ao processar requisição:", error);
+    console.error("❌ Erro:", error);
     return new Response(JSON.stringify({ resposta: "Erro interno ao processar." }), {
       status: 500,
       headers: { ...headers, "Content-Type": "application/json" }

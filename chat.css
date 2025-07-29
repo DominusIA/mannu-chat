@@ -1,4 +1,3 @@
-
 body {
   margin: 0;
   padding: 0;
@@ -50,6 +49,40 @@ body {
   align-self: flex-start;
   color: #ffffff;
   background: none;
+}
+
+/* Imagem gerada pela IA */
+.imagem-gerada {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+/* Botão de download */
+.mensagem.ia button {
+  margin-top: 8px;
+  padding: 6px 14px;
+  background-color: #4252ff;
+  color: #010420;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+.mensagem.ia button:hover {
+  background-color: #3040d8;
+}
+
+/* Imagem de preview (antes do envio) */
+.preview-img {
+  max-width: 180px;
+  max-height: 180px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
 }
 
 /* Scroll personalizado */
