@@ -53,7 +53,7 @@
       border-radius: 10px;
       font-size: 16px;
       line-height: 20px;
-      max-height: 120px; /* máx 4 linhas */
+      max-height: 120px;
       overflow-y: auto;
       box-sizing: border-box;
     }
@@ -83,7 +83,6 @@
       cursor: pointer;
     }
 
-    /* Novo estilo para o preview da imagem */
     #preview-imagem {
       margin-top: 10px;
     }
@@ -101,14 +100,11 @@
     <div class="caixa-input">
       <textarea id="user-input" placeholder="Pergunte à Mannu.AI" rows="1"></textarea>
       
-      <!-- Preview da imagem antes do envio -->
       <div id="preview-imagem"></div>
 
-      <!-- Upload de imagem -->
       <label for="file-input" class="upload-button">+ Anexar imagens</label>
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/jpg" style="display: none" />
 
-      <!-- Botão de envio -->
       <button id="send-button">↑</button>
     </div>
   </div>

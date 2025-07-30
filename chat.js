@@ -3,11 +3,11 @@ import { supabase } from "./supabase.js";
 const chatContainer = document.getElementById("chat");
 const inputMensagem = document.getElementById("user-input");
 const botaoEnviar = document.getElementById("send-button");
-const fileInput = document.getElementById("upload");
-const previewImagem = document.getElementById("preview-imagem"); // Caso queira usar preview futuro
+const fileInput = document.getElementById("file-input");
+const previewImagem = document.getElementById("preview-imagem");
 
 let imagemSelecionada = null;
-const sessionId = crypto.randomUUID(); // Sessão única
+const sessionId = crypto.randomUUID();
 
 // Mostra imagem antes de enviar
 fileInput.addEventListener("change", () => {
@@ -15,14 +15,12 @@ fileInput.addEventListener("change", () => {
   if (file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
     const reader = new FileReader();
     reader.onload = () => {
-      const preview = document.createElement("div");
-      preview.innerHTML = `<img src="${reader.result}" class="preview-img" />`;
-      chatContainer.appendChild(preview);
+      previewImagem.innerHTML = `<img src="${reader.result}" class="preview-img" style="max-width: 100px; border-radius: 10px;" />`;
       imagemSelecionada = file;
     };
     reader.readAsDataURL(file);
   } else {
-    adicionarMensagem("mannu", "❌ Formato de imagem não suportado. Envie JPG, JPEG ou PNG.");
+    previewImagem.innerHTML = "<p style='color: red;'>❌ Formato não suportado. Envie JPG, JPEG ou PNG.</p>";
     imagemSelecionada = null;
   }
 });
@@ -34,6 +32,7 @@ botaoEnviar.addEventListener("click", async () => {
 
   adicionarMensagem("usuário", texto);
   inputMensagem.value = "";
+  previewImagem.innerHTML = "";
 
   if (imagemSelecionada) {
     const { data, error } = await supabase.storage
@@ -57,7 +56,6 @@ botaoEnviar.addEventListener("click", async () => {
     );
     imagemSelecionada = null;
 
-    // Salva link temporariamente
     sessionStorage.setItem("imagem-pendente", url);
     return;
   }
@@ -78,7 +76,6 @@ botaoEnviar.addEventListener("click", async () => {
 
   const dados = await resposta.json();
 
-  // Caso esteja gerando imagem
   if (dados.gerandoImagem && dados.promptImagem) {
     atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
 
@@ -86,7 +83,7 @@ botaoEnviar.addEventListener("click", async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // Substitua de forma segura no backend
+        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // Substituir via backend seguro
       },
       body: JSON.stringify({
         model: "dall-e-3",
@@ -139,4 +136,3 @@ function atualizarUltimaMensagem(remetente, novoTexto) {
     ultima.textContent = novoTexto;
   }
 }
-
