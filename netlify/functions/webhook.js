@@ -43,10 +43,13 @@ export default async (req, context) => {
       const img = TEMP_IMAGE_STATE.get(sessionId);
       TEMP_IMAGE_STATE.delete(sessionId); // limpa estado
 
-      return new Response(JSON.stringify({ resposta: "🖼️ Gerando imagem..." }), {
+      return new Response(JSON.stringify({
+        resposta: "🖼️ Gerando imagem...",
+        gerandoImagem: true,
+        promptImagem: `${img}\n${mensagem}`
+      }), {
         status: 200,
-        headers: { ...headers, "Content-Type": "application/json" },
-        // o front deve aguardar essa resposta e chamar de novo com o novo prompt
+        headers: { ...headers, "Content-Type": "application/json" }
       });
     }
 
@@ -86,7 +89,7 @@ export default async (req, context) => {
     });
 
     const data = await response.json();
-    const resposta = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
+    const resposta = data.choices?.[0]?.message?.content || "❌ Ocorreu um erro ao gerar a resposta.";
 
     return new Response(JSON.stringify({ resposta }), {
       status: 200,
@@ -95,7 +98,7 @@ export default async (req, context) => {
 
   } catch (error) {
     console.error("❌ Erro:", error);
-    return new Response(JSON.stringify({ resposta: "Erro interno ao processar." }), {
+    return new Response(JSON.stringify({ resposta: "❌ Erro interno ao processar sua mensagem." }), {
       status: 500,
       headers: { ...headers, "Content-Type": "application/json" }
     });

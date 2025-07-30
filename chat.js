@@ -1,15 +1,15 @@
 import { supabase } from "./supabase.js";
 
-const chatContainer = document.getElementById("chat");
-const inputMensagem = document.getElementById("user-input");
-const botaoEnviar = document.getElementById("send-button");
+const chatContainer = document.getElementById("chat-container");
+const inputMensagem = document.getElementById("mensagem");
+const botaoEnviar = document.getElementById("enviar");
 const fileInput = document.getElementById("file-input");
 const previewImagem = document.getElementById("preview-imagem");
 
 let imagemSelecionada = null;
-const sessionId = crypto.randomUUID();
+const sessionId = crypto.randomUUID(); // ID único da sessão
 
-// Mostra imagem antes de enviar
+// Preview da imagem antes do envio
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
   if (file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
@@ -20,12 +20,12 @@ fileInput.addEventListener("change", () => {
     };
     reader.readAsDataURL(file);
   } else {
-    previewImagem.innerHTML = "<p style='color: red;'>❌ Formato não suportado. Envie JPG, JPEG ou PNG.</p>";
+    previewImagem.innerHTML = "<p style='color: red;'>❌ Formato não suportado.</p>";
     imagemSelecionada = null;
   }
 });
 
-// Envia mensagem
+// Clique no botão de enviar
 botaoEnviar.addEventListener("click", async () => {
   const texto = inputMensagem.value.trim();
   if (!texto && !imagemSelecionada) return;
@@ -43,17 +43,14 @@ botaoEnviar.addEventListener("click", async () => {
       });
 
     if (error) {
-      adicionarMensagem("mannu", "Erro ao enviar imagem.");
+      adicionarMensagem("mannu", "❌ Erro ao enviar a imagem.");
       imagemSelecionada = null;
       return;
     }
 
     const url = supabase.storage.from("imagens").getPublicUrl(data.path).data.publicUrl;
 
-    adicionarMensagem(
-      "mannu",
-      "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)"
-    );
+    adicionarMensagem("mannu", "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)");
     imagemSelecionada = null;
 
     sessionStorage.setItem("imagem-pendente", url);
@@ -68,6 +65,7 @@ botaoEnviar.addEventListener("click", async () => {
   sessionStorage.removeItem("imagem-pendente");
 
   adicionarMensagem("mannu", "Digitando...");
+
   const resposta = await fetch("https://mannu-backend.netlify.app/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -83,7 +81,7 @@ botaoEnviar.addEventListener("click", async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // Substituir via backend seguro
+        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // deixe isso comentado se estiver usando geração via backend
       },
       body: JSON.stringify({
         model: "dall-e-3",
@@ -96,14 +94,14 @@ botaoEnviar.addEventListener("click", async () => {
     const resultado = await gerar.json();
     const imageUrl = resultado.data?.[0]?.url;
 
-    atualizarUltimaMensagem("mannu", imageUrl || "Não consegui gerar a imagem. Tente reformular o pedido.");
+    atualizarUltimaMensagem("mannu", imageUrl || "❌ Não consegui gerar a imagem. Tente reformular o pedido.");
     return;
   }
 
   atualizarUltimaMensagem("mannu", dados.resposta);
 });
 
-// Renderiza mensagem
+// Adiciona nova mensagem no chat
 function adicionarMensagem(remetente, texto) {
   const msg = document.createElement("div");
   msg.className = `mensagem ${remetente}`;
@@ -121,7 +119,7 @@ function adicionarMensagem(remetente, texto) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Atualiza última resposta da Mannu
+// Atualiza a última resposta da Mannu
 function atualizarUltimaMensagem(remetente, novoTexto) {
   const mensagens = document.querySelectorAll(`.mensagem.${remetente}`);
   const ultima = mensagens[mensagens.length - 1];
@@ -136,4 +134,3 @@ function atualizarUltimaMensagem(remetente, novoTexto) {
     ultima.textContent = novoTexto;
   }
 }
-

@@ -26,7 +26,7 @@ body {
   gap: 20px;
   margin-bottom: 160px; /* espaço para o rodapé */
   width: 100%;
-  max-width: 700px; /* limite de largura centralizado */
+  max-width: 700px;
 }
 
 .mensagem {
@@ -45,10 +45,10 @@ body {
   color: #fff;
 }
 
-.mensagem.ia {
+.mensagem.mannu {
   align-self: flex-start;
-  color: #ffffff;
   background: none;
+  color: #ffffff;
 }
 
 /* Imagem gerada pela IA */
@@ -60,7 +60,7 @@ body {
 }
 
 /* Botão de download */
-.mensagem.ia button {
+.mensagem.mannu button {
   margin-top: 8px;
   padding: 6px 14px;
   background-color: #4252ff;
@@ -72,11 +72,11 @@ body {
   font-weight: 600;
 }
 
-.mensagem.ia button:hover {
+.mensagem.mannu button:hover {
   background-color: #3040d8;
 }
 
-/* Imagem de preview (antes do envio) */
+/* Preview da imagem antes do envio */
 .preview-img {
   max-width: 180px;
   max-height: 180px;
@@ -94,8 +94,8 @@ body {
   border-radius: 10px;
 }
 
-/* Ajustes do botão de envio */
-#send-button {
+/* Botão de envio (seta) */
+#send-button, #enviar {
   display: flex;
   align-items: center;
   justify-content: center;

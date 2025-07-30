@@ -45,7 +45,7 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 
-    #user-input {
+    #mensagem, #user-input {
       width: 100%;
       resize: none;
       border: none;
@@ -69,7 +69,7 @@
       width: fit-content;
     }
 
-    #send-button {
+    #send-button, #enviar {
       position: absolute;
       right: 20px;
       bottom: 25px;
@@ -95,17 +95,17 @@
       <img src="mannu-personagem.png" alt="Personagem Mannu" class="personagem" />
     </div>
 
-    <div id="chat" class="mensagens"></div>
+    <div id="chat-container" class="mensagens"></div>
 
     <div class="caixa-input">
-      <textarea id="user-input" placeholder="Pergunte à Mannu.AI" rows="1"></textarea>
-      
+      <textarea id="mensagem" placeholder="Pergunte à Mannu.AI" rows="1"></textarea>
+
       <div id="preview-imagem"></div>
 
       <label for="file-input" class="upload-button">+ Anexar imagens</label>
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/jpg" style="display: none" />
 
-      <button id="send-button">↑</button>
+      <button id="enviar">↑</button>
     </div>
   </div>
 
