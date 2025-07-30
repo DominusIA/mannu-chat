@@ -76,22 +76,14 @@ botaoEnviar.addEventListener("click", async () => {
   if (dados.gerandoImagem && dados.promptImagem) {
     atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
 
-    const gerar = await fetch("https://api.openai.com/v1/images/generations", {
+    const gerar = await fetch("https://mannu-backend.netlify.app/api/gerar-imagem", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // Trocar por backend se necessário
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: dados.promptImagem,
-        n: 1,
-        size: "1024x1024"
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: dados.promptImagem }),
     });
 
     const resultado = await gerar.json();
-    const imageUrl = resultado.data?.[0]?.url;
+    const imageUrl = resultado.url;
 
     atualizarUltimaMensagem("mannu", imageUrl || "Não consegui gerar a imagem. Tente reformular o pedido.");
     return;
@@ -108,7 +100,7 @@ function adicionarMensagem(remetente, texto) {
   if (texto.includes(".png") || texto.includes(".jpg") || texto.includes(".jpeg")) {
     msg.innerHTML = `
       <img src="${texto}" class="imagem-gerada" />
-      <button onclick="window.open('${texto}', '_blank')">Baixar</button>
+      <button class="btn-baixar" onclick="window.open('${texto}', '_blank')">Baixar</button>
     `;
   } else {
     msg.textContent = texto;
@@ -127,7 +119,7 @@ function atualizarUltimaMensagem(remetente, novoTexto) {
   if (novoTexto.includes(".png") || novoTexto.includes(".jpg") || novoTexto.includes(".jpeg")) {
     ultima.innerHTML = `
       <img src="${novoTexto}" class="imagem-gerada" />
-      <button onclick="window.open('${novoTexto}', '_blank')">Baixar</button>
+      <button class="btn-baixar" onclick="window.open('${novoTexto}', '_blank')">Baixar</button>
     `;
   } else {
     ultima.textContent = novoTexto;
