@@ -43,9 +43,7 @@ export default async (req, context) => {
       "recria essa imagem", "refaça essa imagem", "faz igual essa imagem",
       "crie essa imagem", "use essa imagem de referência", "recrie com meu número",
       "muda só o fundo", "muda só o texto", "refaz com meu whatsapp",
-      "desenvolve essa imagem", "recria com outra cor",
-      "refaça igual", "recria igual", "refaz igual", "cria parecida",
-      "crie igual", "faz parecida", "gera igual", "gera parecido"
+      "desenvolve essa imagem", "recria com outra cor"
     ];
 
     const mensagemMinuscula = mensagem.toLowerCase();
