@@ -65,7 +65,7 @@ botaoEnviar.addEventListener("click", async () => {
   sessionStorage.removeItem("imagem-pendente");
 
   adicionarMensagem("mannu", "Digitando...");
-  const resposta = await fetch("https://mannu-backend.netlify.app/api/webhook.js", {
+  const resposta = await fetch("https://mannu-backend.netlify.app/.netlify/functions/webhook", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

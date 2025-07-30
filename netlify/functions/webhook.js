@@ -2,11 +2,12 @@ import promptMannu from './prompt-mannu.js';
 
 export default async (req, context) => {
   const headers = {
-    'Access-Control-Allow-Origin': 'https://mannuai.netlify.app',
+    'Access-Control-Allow-Origin': '*', // OU use 'https://mannuai.netlify.app' se quiser restringir
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
+  // Trata requisição de pré-vôo (CORS)
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -54,6 +55,7 @@ export default async (req, context) => {
       gerandoImagem,
       promptImagem: gerandoImagem ? mensagem : null
     }), {
+      status: 200,
       headers: {
         ...headers,
         "Content-Type": "application/json"
