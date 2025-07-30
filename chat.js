@@ -139,3 +139,4 @@ function atualizarUltimaMensagem(remetente, novoTexto) {
     ultima.textContent = novoTexto;
   }
 }
+
