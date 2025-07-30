@@ -7,30 +7,30 @@ const fileInput = document.getElementById("file-input");
 const previewImagem = document.getElementById("preview-imagem");
 
 let imagemSelecionada = null;
-const sessionId = crypto.randomUUID(); // ID único da sessão
+const sessionId = crypto.randomUUID();
 
-// Preview da imagem antes do envio
+// Preview da imagem
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
   if (file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
     const reader = new FileReader();
     reader.onload = () => {
-      previewImagem.innerHTML = `<img src="${reader.result}" class="preview-img" style="max-width: 100px; border-radius: 10px;" />`;
+      previewImagem.innerHTML = `<img src="${reader.result}" class="preview-img" />`;
       imagemSelecionada = file;
     };
     reader.readAsDataURL(file);
   } else {
-    previewImagem.innerHTML = "<p style='color: red;'>❌ Formato não suportado.</p>";
+    previewImagem.innerHTML = "<p style='color: red;'>Formato não suportado.</p>";
     imagemSelecionada = null;
   }
 });
 
-// Clique no botão de enviar
+// Envio da mensagem
 botaoEnviar.addEventListener("click", async () => {
   const texto = inputMensagem.value.trim();
   if (!texto && !imagemSelecionada) return;
 
-  adicionarMensagem("usuário", texto);
+  adicionarMensagem("usuario", texto);
   inputMensagem.value = "";
   previewImagem.innerHTML = "";
 
@@ -43,7 +43,7 @@ botaoEnviar.addEventListener("click", async () => {
       });
 
     if (error) {
-      adicionarMensagem("mannu", "❌ Erro ao enviar a imagem.");
+      adicionarMensagem("mannu", "Erro ao enviar imagem.");
       imagemSelecionada = null;
       return;
     }
@@ -65,7 +65,6 @@ botaoEnviar.addEventListener("click", async () => {
   sessionStorage.removeItem("imagem-pendente");
 
   adicionarMensagem("mannu", "Digitando...");
-
   const resposta = await fetch("https://mannu-backend.netlify.app/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -81,7 +80,7 @@ botaoEnviar.addEventListener("click", async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // deixe isso comentado se estiver usando geração via backend
+        Authorization: `Bearer ${YOUR_OPENAI_API_KEY}` // Trocar por backend se necessário
       },
       body: JSON.stringify({
         model: "dall-e-3",
@@ -94,14 +93,14 @@ botaoEnviar.addEventListener("click", async () => {
     const resultado = await gerar.json();
     const imageUrl = resultado.data?.[0]?.url;
 
-    atualizarUltimaMensagem("mannu", imageUrl || "❌ Não consegui gerar a imagem. Tente reformular o pedido.");
+    atualizarUltimaMensagem("mannu", imageUrl || "Não consegui gerar a imagem. Tente reformular o pedido.");
     return;
   }
 
   atualizarUltimaMensagem("mannu", dados.resposta);
 });
 
-// Adiciona nova mensagem no chat
+// Adiciona mensagens no chat
 function adicionarMensagem(remetente, texto) {
   const msg = document.createElement("div");
   msg.className = `mensagem ${remetente}`;
@@ -119,7 +118,7 @@ function adicionarMensagem(remetente, texto) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Atualiza a última resposta da Mannu
+// Atualiza a última resposta
 function atualizarUltimaMensagem(remetente, novoTexto) {
   const mensagens = document.querySelectorAll(`.mensagem.${remetente}`);
   const ultima = mensagens[mensagens.length - 1];
