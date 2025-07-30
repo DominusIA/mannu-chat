@@ -1,22 +1,21 @@
 import promptMannu from './prompt-mannu.js';
 
-export default async (req, context) => {
+export const handler = async (event, context) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*', // OU use 'https://mannuai.netlify.app' se quiser restringir
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
-  // Trata requisição de pré-vôo (CORS)
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
       headers
-    });
+    };
   }
 
   try {
-    const { mensagem, sessionId } = await req.json();
+    const { mensagem, sessionId } = JSON.parse(event.body);
 
     const promptFinal = [
       { role: "system", content: promptMannu },
@@ -39,7 +38,6 @@ export default async (req, context) => {
     const data = await resposta.json();
     const respostaTexto = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
-    // DETECÇÃO DE PEDIDO DE IMAGEM
     const padroesImagem = [
       "recria essa imagem", "refaça essa imagem", "faz igual essa imagem",
       "crie essa imagem", "use essa imagem de referência", "recrie com meu número",
@@ -48,28 +46,24 @@ export default async (req, context) => {
     ];
 
     const mensagemMinuscula = mensagem.toLowerCase();
-    const gerandoImagem = padroesImagem.some(padrao => mensagemMinuscula.includes(padrao));
+    const gerandoImagem = padroesImagem.some(p => mensagemMinuscula.includes(p));
 
-    return new Response(JSON.stringify({
-      resposta: respostaTexto,
-      gerandoImagem,
-      promptImagem: gerandoImagem ? mensagem : null
-    }), {
-      status: 200,
-      headers: {
-        ...headers,
-        "Content-Type": "application/json"
-      }
-    });
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        resposta: respostaTexto,
+        gerandoImagem,
+        promptImagem: gerandoImagem ? mensagem : null
+      })
+    };
 
   } catch (err) {
     console.error("Erro no webhook:", err);
-    return new Response(JSON.stringify({ erro: "Erro interno no servidor." }), {
-      status: 500,
-      headers: {
-        ...headers,
-        "Content-Type": "application/json"
-      }
-    });
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ erro: "Erro interno no servidor." })
+    };
   }
 };

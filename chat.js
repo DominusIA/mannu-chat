@@ -76,7 +76,7 @@ botaoEnviar.addEventListener("click", async () => {
   if (dados.gerandoImagem && dados.promptImagem) {
     atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
 
-    const gerar = await fetch("https://mannu-backend.netlify.app/api/gerar-imagem", {
+    const gerar = await fetch("https://mannu-backend.netlify.app/.netlify/functions/gerar-imagem", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: dados.promptImagem }),
