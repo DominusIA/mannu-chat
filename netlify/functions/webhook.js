@@ -2,7 +2,7 @@ import promptMannu from './prompt-mannu.js';
 
 export default async (req, context) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*', // ← você pode usar '*' ou 'https://mannuai.netlify.app'
+    'Access-Control-Allow-Origin': 'https://mannuai.netlify.app',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
@@ -43,7 +43,9 @@ export default async (req, context) => {
       "recria essa imagem", "refaça essa imagem", "faz igual essa imagem",
       "crie essa imagem", "use essa imagem de referência", "recrie com meu número",
       "muda só o fundo", "muda só o texto", "refaz com meu whatsapp",
-      "desenvolve essa imagem", "recria com outra cor"
+      "desenvolve essa imagem", "recria com outra cor",
+      "refaça igual", "recria igual", "refaz igual", "cria parecida",
+      "crie igual", "faz parecida", "gera igual", "gera parecido"
     ];
 
     const mensagemMinuscula = mensagem.toLowerCase();
