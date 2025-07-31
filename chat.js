@@ -34,6 +34,8 @@ botaoEnviar.addEventListener("click", async () => {
   inputMensagem.value = "";
   previewImagem.innerHTML = "";
 
+  let imagemUrl = null;
+
   if (imagemSelecionada) {
     const { data, error } = await supabase.storage
       .from("imagens")
@@ -49,11 +51,8 @@ botaoEnviar.addEventListener("click", async () => {
       return;
     }
 
-    const url = supabase.storage.from("imagens").getPublicUrl(data.path).data.publicUrl;
-
-    adicionarMensagem("mannu", "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)");
-    sessionStorage.setItem("imagem-pendente", url);
-    return;
+    imagemUrl = supabase.storage.from("imagens").getPublicUrl(data.path).data.publicUrl;
+    sessionStorage.setItem("imagem-pendente", imagemUrl);
   }
 
   const imagemPendente = sessionStorage.getItem("imagem-pendente");
@@ -82,17 +81,13 @@ botaoEnviar.addEventListener("click", async () => {
     if (dados.gerandoImagem && dados.promptImagem) {
       atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
 
-      const imagemPendente = sessionStorage.getItem("imagem-pendente"); // ✅ Correto agora
       const gerar = await fetch("/.netlify/functions/gerar-imagem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: dados.promptImagem,
-          referencia: imagemPendente || null
+          prompt: dados.promptImagem
         }),
       });
-
-      sessionStorage.removeItem("imagem-pendente");
 
       if (!gerar.ok) {
         atualizarUltimaMensagem("mannu", "Erro ao gerar a imagem.");
