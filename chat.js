@@ -9,7 +9,7 @@ const previewImagem = document.getElementById("preview-imagem");
 let imagemSelecionada = null;
 const sessionId = crypto.randomUUID();
 
-// Preview da imagem
+// Preview da imagem selecionada
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
   if (file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
@@ -34,6 +34,7 @@ botaoEnviar.addEventListener("click", async () => {
   inputMensagem.value = "";
   previewImagem.innerHTML = "";
 
+  // Caso imagem esteja presente
   if (imagemSelecionada) {
     const { data, error } = await supabase.storage
       .from("imagens")
@@ -42,21 +43,21 @@ botaoEnviar.addEventListener("click", async () => {
         upsert: false,
       });
 
+    imagemSelecionada = null;
+
     if (error) {
       adicionarMensagem("mannu", "Erro ao enviar imagem.");
-      imagemSelecionada = null;
       return;
     }
 
     const url = supabase.storage.from("imagens").getPublicUrl(data.path).data.publicUrl;
 
     adicionarMensagem("mannu", "Recebi sua imagem. Você quer que eu faça semelhante ou deseja mudar algo? (ex: cor, texto, número ou endereço?)");
-    imagemSelecionada = null;
-
     sessionStorage.setItem("imagem-pendente", url);
     return;
   }
 
+  // Caso seja apenas texto ou imagem pendente
   const imagemPendente = sessionStorage.getItem("imagem-pendente");
   const payload = imagemPendente
     ? { mensagem: `${imagemPendente}\n${texto}`, sessionId }
@@ -65,31 +66,47 @@ botaoEnviar.addEventListener("click", async () => {
   sessionStorage.removeItem("imagem-pendente");
 
   adicionarMensagem("mannu", "Digitando...");
-  const resposta = await fetch("https://mannu-backend.netlify.app/.netlify/functions/webhook", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
 
-  const dados = await resposta.json();
-
-  if (dados.gerandoImagem && dados.promptImagem) {
-    atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
-
-    const gerar = await fetch("https://mannu-backend.netlify.app/.netlify/functions/gerar-imagem", {
+  try {
+    const resposta = await fetch("/.netlify/functions/webhook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: dados.promptImagem }),
+      body: JSON.stringify(payload),
     });
 
-    const resultado = await gerar.json();
-    const imageUrl = resultado.url;
+    if (!resposta.ok) {
+      atualizarUltimaMensagem("mannu", "Erro ao se comunicar com o servidor.");
+      return;
+    }
 
-    atualizarUltimaMensagem("mannu", imageUrl || "Não consegui gerar a imagem. Tente reformular o pedido.");
-    return;
+    const dados = await resposta.json();
+
+    if (dados.gerandoImagem && dados.promptImagem) {
+      atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
+
+      const gerar = await fetch("/.netlify/functions/gerar-imagem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: dados.promptImagem }),
+      });
+
+      if (!gerar.ok) {
+        atualizarUltimaMensagem("mannu", "Erro ao gerar a imagem.");
+        return;
+      }
+
+      const resultado = await gerar.json();
+      const imageUrl = resultado.url;
+
+      atualizarUltimaMensagem("mannu", imageUrl || "Não consegui gerar a imagem. Tente reformular o pedido.");
+    } else {
+      atualizarUltimaMensagem("mannu", dados.resposta);
+    }
+
+  } catch (error) {
+    console.error("Erro na comunicação:", error);
+    atualizarUltimaMensagem("mannu", "Erro ao processar a resposta. Tente novamente.");
   }
-
-  atualizarUltimaMensagem("mannu", dados.resposta);
 });
 
 // Adiciona mensagens no chat
@@ -97,7 +114,7 @@ function adicionarMensagem(remetente, texto) {
   const msg = document.createElement("div");
   msg.className = `mensagem ${remetente}`;
 
-  if (texto.includes(".png") || texto.includes(".jpg") || texto.includes(".jpeg")) {
+  if (/\.(png|jpg|jpeg)$/.test(texto)) {
     msg.innerHTML = `
       <img src="${texto}" class="imagem-gerada" />
       <button class="btn-baixar" onclick="window.open('${texto}', '_blank')">Baixar</button>
@@ -110,13 +127,13 @@ function adicionarMensagem(remetente, texto) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Atualiza a última resposta
+// Atualiza a última resposta da Mannu
 function atualizarUltimaMensagem(remetente, novoTexto) {
   const mensagens = document.querySelectorAll(`.mensagem.${remetente}`);
   const ultima = mensagens[mensagens.length - 1];
   if (!ultima) return;
 
-  if (novoTexto.includes(".png") || novoTexto.includes(".jpg") || novoTexto.includes(".jpeg")) {
+  if (/\.(png|jpg|jpeg)$/.test(novoTexto)) {
     ultima.innerHTML = `
       <img src="${novoTexto}" class="imagem-gerada" />
       <button class="btn-baixar" onclick="window.open('${novoTexto}', '_blank')">Baixar</button>

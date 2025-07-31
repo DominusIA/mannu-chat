@@ -2,7 +2,7 @@ import promptMannu from './prompt-mannu.js';
 
 export const handler = async (event, context) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'https://mannuai.netlify.app', // Em produção, melhor que seja fixo
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
@@ -35,9 +35,19 @@ export const handler = async (event, context) => {
       })
     });
 
+    if (!resposta.ok) {
+      console.error("Erro da API OpenAI:", await resposta.text());
+      throw new Error("Falha na chamada da OpenAI");
+    }
+
     const data = await resposta.json();
+
     const respostaTexto = data.choices?.[0]?.message?.content || "Erro ao gerar resposta.";
 
+    // Log para debug
+    console.log("🔹 Resposta da Mannu:", respostaTexto);
+
+    // Detectar se o usuário está pedindo uma imagem
     const padroesImagem = [
       "recria essa imagem", "refaça essa imagem", "faz igual essa imagem",
       "crie essa imagem", "use essa imagem de referência", "recrie com meu número",

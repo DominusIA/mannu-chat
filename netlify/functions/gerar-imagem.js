@@ -1,19 +1,27 @@
-export default async (req, context) => {
+export const handler = async (event, context) => {
   const headers = {
-    'Access-Control-Allow-Origin': 'https://mannuai.netlify.app',
+    'Access-Control-Allow-Origin': '*', // ou coloque o domínio fixo: 'https://mannuai.netlify.app'
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
       headers
-    });
+    };
   }
 
   try {
-    const { prompt } = await req.json();
+    const { prompt } = JSON.parse(event.body);
+
+    if (!prompt || prompt.trim() === "") {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ erro: "Prompt inválido para geração de imagem." })
+      };
+    }
 
     console.log("🎨 Prompt para imagem recebido:", prompt);
 
@@ -30,24 +38,36 @@ export default async (req, context) => {
       })
     });
 
+    if (!resposta.ok) {
+      console.error("🔴 Erro da OpenAI:", await resposta.text());
+      return {
+        statusCode: 502,
+        headers,
+        body: JSON.stringify({ erro: "Falha na geração da imagem." })
+      };
+    }
+
     const dados = await resposta.json();
     const url = dados?.data?.[0]?.url || null;
 
-    return new Response(JSON.stringify({ url }), {
+    return {
+      statusCode: 200,
       headers: {
         ...headers,
         "Content-Type": "application/json"
-      }
-    });
+      },
+      body: JSON.stringify({ url })
+    };
 
   } catch (err) {
-    console.error("Erro ao gerar imagem:", err);
-    return new Response(JSON.stringify({ erro: "Erro ao gerar imagem." }), {
-      status: 500,
+    console.error("🔴 Erro inesperado ao gerar imagem:", err);
+    return {
+      statusCode: 500,
       headers: {
         ...headers,
         "Content-Type": "application/json"
-      }
-    });
+      },
+      body: JSON.stringify({ erro: "Erro interno ao gerar imagem." })
+    };
   }
 };
