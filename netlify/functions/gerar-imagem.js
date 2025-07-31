@@ -1,6 +1,6 @@
-export const handler = async (event, context) => {
+export const handler = async (event) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*', // ou coloque o domínio fixo: 'https://mannuai.netlify.app'
+    'Access-Control-Allow-Origin': '*', // ou 'https://mannuai.netlify.app' se quiser travar
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
@@ -39,7 +39,8 @@ export const handler = async (event, context) => {
     });
 
     if (!resposta.ok) {
-      console.error("🔴 Erro da OpenAI:", await resposta.text());
+      const erroDetalhado = await resposta.text();
+      console.error("🔴 Erro da OpenAI:", erroDetalhado);
       return {
         statusCode: 502,
         headers,
