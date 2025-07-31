@@ -9,7 +9,7 @@ const previewImagem = document.getElementById("preview-imagem");
 let imagemSelecionada = null;
 const sessionId = crypto.randomUUID();
 
-// Preview da imagem selecionada
+// Preview da imagem
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
   if (file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
@@ -34,7 +34,6 @@ botaoEnviar.addEventListener("click", async () => {
   inputMensagem.value = "";
   previewImagem.innerHTML = "";
 
-  // Caso imagem esteja presente
   if (imagemSelecionada) {
     const { data, error } = await supabase.storage
       .from("imagens")
@@ -57,7 +56,6 @@ botaoEnviar.addEventListener("click", async () => {
     return;
   }
 
-  // Caso seja apenas texto ou imagem pendente
   const imagemPendente = sessionStorage.getItem("imagem-pendente");
   const payload = imagemPendente
     ? { mensagem: `${imagemPendente}\n${texto}`, sessionId }
@@ -84,11 +82,17 @@ botaoEnviar.addEventListener("click", async () => {
     if (dados.gerandoImagem && dados.promptImagem) {
       atualizarUltimaMensagem("mannu", "🖼️ Gerando imagem...");
 
+      const imagemPendente = sessionStorage.getItem("imagem-pendente"); // ✅ Correto agora
       const gerar = await fetch("/.netlify/functions/gerar-imagem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: dados.promptImagem }),
+        body: JSON.stringify({
+          prompt: dados.promptImagem,
+          referencia: imagemPendente || null
+        }),
       });
+
+      sessionStorage.removeItem("imagem-pendente");
 
       if (!gerar.ok) {
         atualizarUltimaMensagem("mannu", "Erro ao gerar a imagem.");
@@ -114,7 +118,7 @@ function adicionarMensagem(remetente, texto) {
   const msg = document.createElement("div");
   msg.className = `mensagem ${remetente}`;
 
-  if (/\.(png|jpg|jpeg)$/.test(texto)) {
+  if (texto.startsWith("http") && (texto.includes("openai") || texto.includes("blob.core") || texto.includes("supabase"))) {
     msg.innerHTML = `
       <img src="${texto}" class="imagem-gerada" />
       <button class="btn-baixar" onclick="window.open('${texto}', '_blank')">Baixar</button>
@@ -127,13 +131,13 @@ function adicionarMensagem(remetente, texto) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Atualiza a última resposta da Mannu
+// Atualiza última resposta
 function atualizarUltimaMensagem(remetente, novoTexto) {
   const mensagens = document.querySelectorAll(`.mensagem.${remetente}`);
   const ultima = mensagens[mensagens.length - 1];
   if (!ultima) return;
 
-  if (/\.(png|jpg|jpeg)$/.test(novoTexto)) {
+  if (novoTexto.startsWith("http") && (novoTexto.includes("openai") || novoTexto.includes("blob.core") || novoTexto.includes("supabase"))) {
     ultima.innerHTML = `
       <img src="${novoTexto}" class="imagem-gerada" />
       <button class="btn-baixar" onclick="window.open('${novoTexto}', '_blank')">Baixar</button>
@@ -141,4 +145,6 @@ function atualizarUltimaMensagem(remetente, novoTexto) {
   } else {
     ultima.textContent = novoTexto;
   }
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }

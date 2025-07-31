@@ -1,6 +1,6 @@
 export const handler = async (event) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*', // ou 'https://mannuai.netlify.app' se quiser travar
+    'Access-Control-Allow-Origin': '*', // ou defina seu domínio
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
@@ -13,7 +13,7 @@ export const handler = async (event) => {
   }
 
   try {
-    const { prompt } = JSON.parse(event.body);
+    const { prompt, referencia } = JSON.parse(event.body);
 
     if (!prompt || prompt.trim() === "") {
       return {
@@ -23,7 +23,22 @@ export const handler = async (event) => {
       };
     }
 
-    console.log("🎨 Prompt para imagem recebido:", prompt);
+    console.log("🎨 Prompt recebido:", prompt);
+    if (referencia) {
+      console.log("🖼️ Imagem de referência recebida:", referencia);
+    }
+
+    // Monta o payload
+    const payload = {
+      prompt,
+      n: 1,
+      size: "1024x1024"
+    };
+
+    // Se tiver imagem de referência, adiciona como campo 'image'
+    if (referencia) {
+      payload.prompt = `Baseado nesta imagem: ${referencia}\n${prompt}`;
+    }
 
     const resposta = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
@@ -31,11 +46,7 @@ export const handler = async (event) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
       },
-      body: JSON.stringify({
-        prompt,
-        n: 1,
-        size: "1024x1024"
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!resposta.ok) {
